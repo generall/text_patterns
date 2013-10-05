@@ -8,8 +8,9 @@
 #ifndef CTOKIENPATTERN_H_
 #define CTOKIENPATTERN_H_
 
-namespace std
-{
+#include <string>
+#include "libmathing.h"
+
 
 enum TypeOfMatching {m_full, m_regexp, m_Levenshtein};
 
@@ -17,10 +18,9 @@ class CTokienPattern
 {
 public:
 	TypeOfMatching typeOfMatching;
-	string value;
+	std::string value;
 	CTokienPattern();
 	virtual ~CTokienPattern();
 };
 
-} /* namespace std */
 #endif /* CTOKIENPATTERN_H_ */

@@ -13,10 +13,8 @@
 enum WordType {w_verb, w_noun, w_adjective, w_default };
 enum LimbType {l_subject, l_predicate, l_addition, l_circumstance, l_default};
 
-namespace std
-{
 
-class CWord: public std::CToken
+class CWord: public CToken
 {
 public:
 
@@ -28,5 +26,4 @@ public:
 	virtual ~CWord();
 };
 
-} /* namespace std */
 #endif /* CWORD_H_ */

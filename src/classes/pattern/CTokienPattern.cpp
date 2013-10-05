@@ -7,10 +7,9 @@
 
 #include "CTokienPattern.h"
 
-namespace std
-{
 
-CTokienPattern::CTokienPattern()
+
+CTokienPattern::CTokienPattern():typeOfMatching(m_Levenshtein)
 {
 	// TODO Auto-generated constructor stub
 
@@ -20,5 +19,3 @@ CTokienPattern::~CTokienPattern()
 {
 	// TODO Auto-generated destructor stub
 }
-
-} /* namespace std */

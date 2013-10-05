@@ -15,8 +15,7 @@ enum TokenType
 	type_word, type_punctuation, type_number, type_none
 };
 
-namespace std
-{
+
 
 class CToken
 {
@@ -24,7 +23,7 @@ class CToken
 
 public:
 
-	string value;
+	std::string value;
 
 	CToken();
 	CToken(TokenType t);
@@ -42,5 +41,4 @@ public:
 
 };
 
-} /* namespace std */
 #endif /* CTOKEN_H_ */

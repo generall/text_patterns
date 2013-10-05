@@ -7,9 +7,13 @@
 //============================================================================
 
 #include <iostream>
+#include <string>
+#include "classes/pattern/CTokienPattern.h"
 using namespace std;
 
-int main() {
-	cout << "test" << endl; // prints
+int main()
+{
+
+	cout << levenshtein_distance(string("ololo"), string("olkoslo")) << endl; // prints
 	return 0;
 }
