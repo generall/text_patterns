@@ -7,8 +7,6 @@
 
 #include "CPunctuation.h"
 
-namespace std
-{
 
 CPunctuation::CPunctuation(): punctuationType(p_default)
 {
@@ -26,4 +24,3 @@ CPunctuation::~CPunctuation()
 	// TODO Auto-generated destructor stub
 }
 
-} /* namespace std */

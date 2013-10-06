@@ -7,8 +7,6 @@
 
 #include "CWord.h"
 
-namespace std
-{
 
 CWord::CWord() :limbType(l_default), wordType(w_default)
 {
@@ -25,4 +23,3 @@ CWord::~CWord()
 	// TODO Auto-generated destructor stub
 }
 
-} /* namespace std */
