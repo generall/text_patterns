@@ -13,6 +13,9 @@
 
 typedef unsigned int uint;
 
+namespace patterns
+{
+
 template<class T>
 uint levenshtein_distance(const T & src, const T & dst)
 {
@@ -55,6 +58,8 @@ uint levenshtein_distance(const T & src, const T & dst)
 	}
 
 	return matrix[m][n];
+}
+
 }
 
 #endif /* LIBMATHING_H_ */
