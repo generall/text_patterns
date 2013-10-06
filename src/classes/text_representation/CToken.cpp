@@ -7,8 +7,7 @@
 
 #include "CToken.h"
 
-namespace std
-{
+
 
 CToken::CToken(): type(type_none)
 {
@@ -26,4 +25,3 @@ CToken::~CToken()
 	// TODO Auto-generated destructor stub
 }
 
-} /* namespace std */
