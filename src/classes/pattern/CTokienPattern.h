@@ -17,7 +17,7 @@
 namespace patterns
 {
 
-enum TypeOfMatching {m_full, m_regexp, m_Levenshtein};
+enum TypeOfMatching {m_full, m_regexp, m_Levenshtein, m_type};
 
 class CTokienPattern
 {
@@ -25,8 +25,10 @@ public:
 	TypeOfMatching typeOfMatching;
 	std::string value;
 	uint delta;
+	TokenType tokenType = type_word;
 
 	bool compre(CToken token);
+
 	CTokienPattern();
 	CTokienPattern(TypeOfMatching t);
 	virtual ~CTokienPattern();

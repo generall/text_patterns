@@ -25,10 +25,14 @@ bool CTokienPattern::compre(CToken token)
 	case m_Levenshtein:
 		return levenshtein_distance(value, token.value) < delta;
 	case m_full:
-		return value == token.value;
+		return value == token.value && tokenType == token.getType();
 	case m_regexp:
+	{
 		std::regex txt_regex(value);
-		return std::regex_match( token.value, txt_regex);
+		return std::regex_match(token.value, txt_regex);
+	}
+	case m_type:
+		return tokenType == token.getType();
 	}
 	return false;
 }
