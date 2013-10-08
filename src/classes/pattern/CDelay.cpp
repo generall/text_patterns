@@ -19,9 +19,9 @@ CDelay::CDelay()
 
 bool CDelay::isDelayAccaptable(CToken &t)
 {
-	for(CTokienPattern p : unacceptablePatterns)
+	for(CTokenPattern p : unacceptablePatterns)
 	{
-		if(p.compre(t))
+		if(p.compare(t))
 		{
 			return false; // unacceptable token detected
 		}
@@ -29,10 +29,11 @@ bool CDelay::isDelayAccaptable(CToken &t)
 	return true; // all clear
 }
 
-void CDelay::addUnacceptablePattern(CTokienPattern& p)
+void CDelay::addUnacceptablePattern(CTokenPattern& p)
 {
 	unacceptablePatterns.push_back(p);
 }
+
 
 CDelay::~CDelay()
 {

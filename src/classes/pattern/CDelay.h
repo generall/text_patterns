@@ -19,11 +19,11 @@ class CDelay
 {
 public:
 	uint maxDelayNumber;
-	std::vector<CTokienPattern> unacceptablePatterns;
+	std::vector<CTokenPattern> unacceptablePatterns;
 
 
 	bool isDelayAccaptable(CToken &t); //true, if delay acceptable
-	void addUnacceptablePattern(CTokienPattern &p);
+	void addUnacceptablePattern(CTokenPattern &p);
 
 	CDelay();
 	virtual ~CDelay();

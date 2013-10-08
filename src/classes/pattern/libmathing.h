@@ -19,6 +19,9 @@ namespace patterns
 template<class T>
 uint levenshtein_distance(const T & src, const T & dst)
 {
+	if(src == dst)
+		return 0;
+
 	const uint m = src.size();
 	const uint n = dst.size();
 	if (m == 0)
@@ -30,16 +33,16 @@ uint levenshtein_distance(const T & src, const T & dst)
 		return m;
 	}
 
-	std::vector<std::vector<uint> > matrix(m + 1);
+	std::vector<std::vector<uint> > l_matrix((std::vector<std::vector<uint> >::size_type) (m + 1), std::vector<uint>() );
 
 	for (uint i = 0; i <= m; ++i)
 	{
-		matrix[i].resize(n + 1);
-		matrix[i][0] = i;
+		l_matrix[i].resize(n + 1);
+		l_matrix[i][0] = i;
 	}
 	for (uint i = 0; i <= n; ++i)
 	{
-		matrix[0][i] = i;
+		l_matrix[0][i] = i;
 	}
 
 	uint above_cell, left_cell, diagonal_cell, cost;
@@ -49,15 +52,15 @@ uint levenshtein_distance(const T & src, const T & dst)
 		for (uint j = 1; j <= n; ++j)
 		{
 			cost = src[i - 1] == dst[j - 1] ? 0 : 1;
-			above_cell = matrix[i - 1][j];
-			left_cell = matrix[i][j - 1];
-			diagonal_cell = matrix[i - 1][j - 1];
-			matrix[i][j] = std::min(std::min(above_cell + 1, left_cell + 1),
+			above_cell = l_matrix[i - 1][j];
+			left_cell = l_matrix[i][j - 1];
+			diagonal_cell = l_matrix[i - 1][j - 1];
+			l_matrix[i][j] = std::min(std::min(above_cell + 1, left_cell + 1),
 					diagonal_cell + cost);
 		}
 	}
 
-	return matrix[m][n];
+	return l_matrix[m][n];
 }
 
 }

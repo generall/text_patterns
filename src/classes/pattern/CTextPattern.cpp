@@ -15,19 +15,19 @@ CTextPattern::CTextPattern()
 
 }
 
-void CTextPattern::addBack(std::pair<CDelay, CTokienPattern>& p)
+void CTextPattern::addBack(std::pair<CDelay, CTokenPattern>& p)
 {
 	pattern.push_back(p);
 }
 
-void CTextPattern::addFront(std::pair<CDelay, CTokienPattern>& p)
+void CTextPattern::addFront(std::pair<CDelay, CTokenPattern>& p)
 {
 	pattern.push_front(p);
 }
 
 uint CTextPattern::compare(std::vector<CToken>& data)
 {
-	std::list<std::pair<CDelay, CTokienPattern> >::iterator it =
+	std::list<std::pair<CDelay, CTokenPattern> >::iterator it =
 			pattern.begin();
 	uint numOfSkippedTokens = 0;
 	uint numOfFoundPatterns = 0;
@@ -41,9 +41,9 @@ uint CTextPattern::compare(std::vector<CToken>& data)
 	while (it_data != data.end())
 	{
 		numAfterReset++;
-		CToken &token = *it_data;
+		CToken token = *it_data;
 
-		if (it->second.compre(token))
+		if (it->second.compare(token))
 		{
 			it++;
 			numOfSkippedTokens = 0;
@@ -94,7 +94,7 @@ uint CTextPattern::compare(std::vector<CToken>& data)
 			reset_pattern = false;
 			it = pattern.begin();
 			numOfSkippedTokens = 0;
-			it_data -= numAfterReset - 1;
+			it_data -= numAfterReset - 2;
 			numAfterReset = 0;
 		}
 		else

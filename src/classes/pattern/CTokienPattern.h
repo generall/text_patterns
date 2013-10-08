@@ -19,7 +19,7 @@ namespace patterns
 
 enum TypeOfMatching {m_full, m_regexp, m_Levenshtein, m_type};
 
-class CTokienPattern
+class CTokenPattern
 {
 public:
 	TypeOfMatching typeOfMatching;
@@ -27,11 +27,12 @@ public:
 	uint delta;
 	TokenType tokenType = type_word;
 
-	bool compre(CToken token);
+	bool compare(CToken token);
 
-	CTokienPattern();
-	CTokienPattern(TypeOfMatching t);
-	virtual ~CTokienPattern();
+	CTokenPattern();
+	CTokenPattern(uint d, std::string v);// auto Levenshtein constructor
+	CTokenPattern(TypeOfMatching t);
+	virtual ~CTokenPattern();
 };
 
 }

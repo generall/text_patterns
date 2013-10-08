@@ -10,6 +10,8 @@
 
 #include "CToken.h"
 
+namespace patterns
+{
 
 enum PunctuationType {p_dot, p_comma, p_other, p_default };
 
@@ -23,5 +25,7 @@ public:
 	CPunctuation(PunctuationType p);
 	virtual ~CPunctuation();
 };
+
+}
 
 #endif /* CPUNCTUATION_H_ */

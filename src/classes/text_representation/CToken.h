@@ -10,6 +10,9 @@
 
 #include <string>
 
+namespace patterns
+{
+
 enum TokenType
 {
 	type_word, type_punctuation, type_number, type_none
@@ -41,4 +44,5 @@ public:
 
 };
 
+}
 #endif /* CTOKEN_H_ */

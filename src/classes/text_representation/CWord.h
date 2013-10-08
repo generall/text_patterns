@@ -9,6 +9,8 @@
 #define CWORD_H_
 
 #include "CToken.h"
+namespace patterns
+{
 
 enum WordType {w_verb, w_noun, w_adjective, w_default };
 enum LimbType {l_subject, l_predicate, l_addition, l_circumstance, l_default};
@@ -22,8 +24,10 @@ public:
 	WordType wordType;
 
 	CWord();
+	CWord(std::string s);
 	CWord(LimbType l, WordType w);
 	virtual ~CWord();
 };
 
+}
 #endif /* CWORD_H_ */

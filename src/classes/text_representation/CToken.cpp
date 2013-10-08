@@ -7,15 +7,18 @@
 
 #include "CToken.h"
 
+namespace patterns
+{
 
-
-CToken::CToken(): type(type_none)
+CToken::CToken() :
+		type(type_none)
 {
 	// TODO Auto-generated constructor stub
 
 }
 
-CToken::CToken(TokenType t) : type(t)
+CToken::CToken(TokenType t) :
+		type(t)
 {
 
 }
@@ -25,3 +28,4 @@ CToken::~CToken()
 	// TODO Auto-generated destructor stub
 }
 
+}

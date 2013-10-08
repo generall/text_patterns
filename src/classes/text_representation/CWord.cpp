@@ -6,16 +6,26 @@
  */
 
 #include "CWord.h"
-
-
-CWord::CWord() :limbType(l_default), wordType(w_default)
+namespace patterns
 {
-	// TODO Auto-generated constructor stub
 
+CWord::CWord() :
+		limbType(l_default), wordType(w_default)
+{
+	setType(type_word);
 }
 
-CWord::CWord(LimbType l, WordType w):limbType(l), wordType(w)
+CWord::CWord(LimbType l, WordType w) :
+		limbType(l), wordType(w)
 {
+	setType(type_word);
+}
+
+CWord::CWord(std::string s) :
+		limbType(l_default), wordType(w_default)
+{
+	value = s;
+	setType(type_word);
 }
 
 CWord::~CWord()
@@ -23,3 +33,4 @@ CWord::~CWord()
 	// TODO Auto-generated destructor stub
 }
 
+}
