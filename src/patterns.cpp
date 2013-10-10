@@ -10,6 +10,7 @@
 #include <string>
 #include "classes/pattern/CTextPattern.h"
 #include "classes/text_representation/CWord.h"
+#include "classes/text_representation/CDict.h"
 using namespace std;
 
 bool textPatternsTest()
@@ -44,10 +45,27 @@ bool textPatternsTest()
 	return false;
 }
 
+bool loadDictTest()
+{
+	patterns::CDict d;
+	d.parseMysterm("/home/generall/ydict_test.txt");
+	patterns::CWord w("яяя");
+
+	//return false;
+	std::cout << d.find_word(w) << std::endl;
+
+	for (int i = 0; i < 80; i++)
+	{
+		std::cout<<i <<": " << d.dictionary_by_alpha[i]->value << std::endl;
+	}
+
+	return d.find_word(w) != -1;
+}
+
 int main()
 {
 
-	if (textPatternsTest())
+	if (textPatternsTest() && loadDictTest())
 	{
 		cout << "win" << endl;
 	}

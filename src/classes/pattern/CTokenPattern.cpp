@@ -28,7 +28,7 @@ bool CTokenPattern::compare(CToken token)
 		return value == token.value && tokenType == token.getType();
 	case m_regexp:
 	{
-		std::regex txt_regex(value);
+		std::regex txt_regex(value,std::regex_constants::basic);
 		return std::regex_match(token.value, txt_regex);
 	}
 	case m_type:
