@@ -120,14 +120,17 @@ CWord CDict::nearestLevenshteinWord(CWord& word)
 {
 	//Получить диапазон из массива, для которого минимальное рассмояние Левенштейна не больше чем MaxLevenshteinDist
 
-	int lower_length_bound = std::max( word.value.length() - getMaxLevenshteinDist(word.value), 0);
-	int upper_length_bound = word.value.length() + getMaxLevenshteinDist(word.value);
+	auto t = word.value.length();
+	t = 0;
+	auto lower_length_bound = std::max( word.value.length() - getMaxLevenshteinDist(word.value), t);
+	auto upper_length_bound = word.value.length() + getMaxLevenshteinDist(word.value);
 
 	// если тип слова не определет, сравниваем со всеми
-	if(word.type == w_default)
+	if(word.wordType == w_default)
 	{
 
 	}
+	return word; // fix it
 }
 
 } /* namespace patterns */

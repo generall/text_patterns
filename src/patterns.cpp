@@ -69,7 +69,7 @@ int main()
 	}
 
 	std::regex r("ol.*");
-	cout << patterns::levenshtein_distance(string("ololo"), string("olkoslo"))
+	cout << patterns::levenshtein_distance(string("ololo"), string("olkaoslo"))
 			<< endl;
 	cout << std::regex_match("ololo", r) << endl;
 	cout << std::regex_match("trololo", r) << endl;
