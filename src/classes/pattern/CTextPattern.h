@@ -12,7 +12,7 @@
 #include <vector>
 #include <utility> //for std::pair
 #include "CDelay.h"
-#include "CTokienPattern.h"
+#include "CTokenPattern.h"
 
 namespace patterns
 {

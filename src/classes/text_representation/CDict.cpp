@@ -23,7 +23,7 @@ void CDict::addWord(CWord& word)
 	reorganised = false;
 }
 
-int CDict::find_word(CWord& word)
+int CDict::findWord(CWord& word)
 {
 	if (!reorganised)
 		reorganiseToWork();
@@ -34,6 +34,14 @@ int CDict::find_word(CWord& word)
 	if (i == dictionary_by_alpha.end())
 	{
 		return -1;
+	}
+	if (i == dictionary_by_alpha.begin())
+	{
+		if (! std::binary_search(dictionary_by_alpha.begin(),
+				dictionary_by_alpha.end(), &word, CWordCompare()))
+		{
+			return -1;
+		}
 	}
 	return i - dictionary_by_alpha.begin();
 }
@@ -48,10 +56,10 @@ void CDict::reorganiseToWork()
 	std::sort(dictionary_by_alpha.begin(), dictionary_by_alpha.end(),
 			CWordCompare());
 
-	std::cout<<"SEGFAULT not here"<<std::endl;
+	std::cout << "SEGFAULT not here" << std::endl;
 	std::sort(dictionary_by_length.begin(), dictionary_by_length.end(),
 			CWordCompareLength());
-	std::cout<<"SEGFAULT not here"<<std::endl;
+	std::cout << "SEGFAULT not here" << std::endl;
 	reorganised = true;
 }
 

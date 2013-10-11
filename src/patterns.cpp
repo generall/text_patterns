@@ -49,17 +49,9 @@ bool loadDictTest()
 {
 	patterns::CDict d;
 	d.parseMysterm("/home/generall/ydict_test.txt");
-	patterns::CWord w("яяя");
+	patterns::CWord w("убивать");
 
-	//return false;
-	std::cout << d.find_word(w) << std::endl;
-
-	for (int i = 0; i < 80; i++)
-	{
-		std::cout<<i <<": " << d.dictionary_by_alpha[i]->value << std::endl;
-	}
-
-	return d.find_word(w) != -1;
+	return d.findWord(w) != -1;
 }
 
 int main()

@@ -5,7 +5,7 @@
  *      Author: generall
  */
 
-#include "CTokienPattern.h"
+#include "CTokenPattern.h"
 
 namespace patterns
 {

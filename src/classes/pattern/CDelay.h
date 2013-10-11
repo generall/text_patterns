@@ -10,7 +10,7 @@
 
 #include <vector>
 #include "../text_representation/CToken.h"
-#include "CTokienPattern.h"
+#include "CTokenPattern.h"
 
 namespace patterns
 {

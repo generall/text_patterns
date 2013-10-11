@@ -38,7 +38,7 @@ public:
 	void reorganiseToWork();
 
 	void parseMysterm(const std::string &filename);
-	int find_word(CWord &word);
+	int findWord(CWord &word);
 
 	CDict();
 	virtual ~CDict();
