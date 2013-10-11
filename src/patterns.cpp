@@ -49,9 +49,11 @@ bool loadDictTest()
 {
 	patterns::CDict d;
 	d.parseMysterm("/home/generall/ydict_test.txt");
-	patterns::CWord w("убивать");
+	patterns::CWord w1("убивать");
+	patterns::CWord w2("ololo");
 
-	return d.findWord(w) != -1;
+
+	return d.findWord(w1) != -1 && d.findWord(w2) == -1;
 }
 
 int main()

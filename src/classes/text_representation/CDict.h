@@ -13,6 +13,7 @@
 #include <regex>
 #include <algorithm>
 #include <iostream>
+#include <math.h>
 #include "CWord.h"
 
 
@@ -22,21 +23,20 @@ namespace patterns
 class CDict
 {
 
-public:
 	std::set<CWord*, CWordCompare> dictionary;
 	std::vector<CWord*> dictionary_by_alpha;
 	std::vector<CWord*> dictionary_by_length;
 	bool reorganised = false;
 
+	void reorganiseToWork();
+	int getMaxLevenshteinDist(std::string val);
 
-
-
-
+public:
 
 
 	void addWord(CWord &word);
-	void reorganiseToWork();
 
+	CWord nearestLevenshteinWord(CWord &word);
 	void parseMysterm(const std::string &filename);
 	int findWord(CWord &word);
 
