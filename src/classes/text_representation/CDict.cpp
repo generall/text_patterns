@@ -56,16 +56,10 @@ void CDict::reorganiseToWork()
 	std::sort(dictionary_by_alpha.begin(), dictionary_by_alpha.end(),
 			CWordCompare());
 
-	std::cout << "SEGFAULT not here" << std::endl;
 	std::sort(dictionary_by_length.begin(), dictionary_by_length.end(),
 			CWordCompareLength());
-	for (auto w : dictionary_by_length)
-	{
-		std::cout << w->value << std::endl;
-	}
-
-	std::cout << "SEGFAULT not here" << std::endl;
 	reorganised = true;
+
 }
 
 void CDict::parseMysterm(const std::string& filename)
@@ -100,6 +94,41 @@ void CDict::parseMysterm(const std::string& filename)
 	}
 }
 
+void CDict::analysis()
+{
+
+	if (!reorganised)
+		reorganiseToWork();
+
+	std::vector<uint> size_dist_tab;
+	size_dist_tab.resize(100, 100);
+	for (int i = 0; i < dictionary_by_length.size(); i++)
+	{
+		auto leni = dictionary_by_length[i]->value.length();
+		for (int j = i + 1; j < dictionary_by_length.size(); j++)
+		{
+			auto lenj = dictionary_by_length[j]->value.length();
+			if ((lenj - leni) > size_dist_tab[leni])
+			{
+				break;
+			}
+			if (dictionary_by_length[j]->wordType
+					== dictionary_by_length[i]->wordType
+					|| dictionary_by_length[i]->wordType == w_default)
+			{
+				auto dist = levenshtein_distance(dictionary_by_length[j]->value,
+						dictionary_by_length[i]->value);
+				size_dist_tab[leni] = std::min(size_dist_tab[leni], dist);
+				size_dist_tab[lenj] = std::min(size_dist_tab[lenj], dist);
+			}
+		}
+	}
+	for (uint i = 0; i < size_dist_tab.size(); i++)
+	{
+		std::cout << i << ":\t " << size_dist_tab[i] << std::endl;
+	}
+}
+
 CDict::~CDict()
 {
 	for (CWord *w : dictionary)
@@ -107,8 +136,6 @@ CDict::~CDict()
 		delete w;
 	}
 }
-
-
 
 int CDict::getMaxLevenshteinDist(std::string val)
 {
@@ -120,17 +147,76 @@ CWord CDict::nearestLevenshteinWord(CWord& word)
 {
 	//Получить диапазон из массива, для которого минимальное рассмояние Левенштейна не больше чем MaxLevenshteinDist
 
+	if (!reorganised)
+		reorganiseToWork();
+
 	auto t = word.value.length();
-	t = 0;
-	auto lower_length_bound = std::max( word.value.length() - getMaxLevenshteinDist(word.value), t);
-	auto upper_length_bound = word.value.length() + getMaxLevenshteinDist(word.value);
+	t = 1;
+
+	uint max_dist = getMaxLevenshteinDist(word.value);
+	auto lower_length_bound = std::max(word.value.length() - max_dist, t);
+	auto upper_length_bound = word.value.length() + max_dist;
+
+	CWord lower_bound_word(std::string(lower_length_bound, 'a'));
+	CWord upper_bound_word(std::string(upper_length_bound, 'a'));
+
+	std::vector<CWord*>::iterator lower_iterator = std::lower_bound(
+			dictionary_by_length.begin(), dictionary_by_length.end(),
+			&lower_bound_word, CWordCompareLength());
+	std::vector<CWord*>::iterator upper_iterator = std::upper_bound(
+			dictionary_by_length.begin(), dictionary_by_length.end(),
+			&upper_bound_word, CWordCompareLength());
+
+	/*
+	 std::cout << "len: "<< word.value.length() - max_dist <<std::endl;
+	 std::cout << "len: "<< dictionary_by_length.size()<<std::endl;
+	 std::cout << "len: "<< dictionary_by_length[1]->value.length() <<std::endl;
+
+	 std::cout << "low: "<< lower_bound_word.value <<std::endl;
+	 std::cout << "upp: "<< upper_bound_word.value <<std::endl;
+	 std::cout << "low: "<< (*lower_iterator)->value <<std::endl;
+	 std::cout << "upp: "<< (*upper_iterator)->value <<std::endl;
+	 */
 
 	// если тип слова не определет, сравниваем со всеми
-	if(word.wordType == w_default)
+	CWord *nearestWord = &word;
+	uint min_dist = max_dist;
+	std::vector<CWord*>::iterator i = lower_iterator;
+	if (word.wordType == w_default)
 	{
+		while (i != upper_iterator)
+		{
+			//std::cout << (*i)->value << std::endl;
+			//возможно можно организовать кэш тут.
+			uint dist = levenshtein_distance(word.value, (*i)->value);
+			if (dist < min_dist)
+			{
+				min_dist = dist;
+				nearestWord = (*i);
+			}
+			i++;
+		}
 
 	}
-	return word; // fix it
+	else
+	{
+		while (i != upper_iterator)
+		{
+			if (word.wordType == (*i)->wordType)
+			{
+				//std::cout << (*i)->value << std::endl;
+				//возможно можно организовать кэш тут.
+				uint dist = levenshtein_distance(word.value, (*i)->value);
+				if (dist < min_dist)
+				{
+					min_dist = dist;
+					nearestWord = (*i);
+				}
+			}
+			i++;
+		}
+	}
+	return *nearestWord;
 }
 
 } /* namespace patterns */

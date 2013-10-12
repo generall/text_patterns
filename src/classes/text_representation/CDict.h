@@ -15,6 +15,7 @@
 #include <iostream>
 #include <math.h>
 #include "CWord.h"
+#include "../pattern/libmathing.h"
 
 
 namespace patterns
@@ -39,6 +40,8 @@ public:
 	CWord nearestLevenshteinWord(CWord &word);
 	void parseMysterm(const std::string &filename);
 	int findWord(CWord &word);
+	void analysis();
+
 
 	CDict();
 	virtual ~CDict();

@@ -49,9 +49,12 @@ bool loadDictTest()
 {
 	patterns::CDict d;
 	d.parseMysterm("/home/generall/ydict_test.txt");
-	patterns::CWord w1("убивать");
+	patterns::CWord w1("тиран");
 	patterns::CWord w2("ololo");
+	patterns::CWord w3("тиротрон");
 
+	std::cout << d.nearestLevenshteinWord(w3).value << std::endl;
+	d.analysis();
 
 	return d.findWord(w1) != -1 && d.findWord(w2) == -1;
 }
@@ -69,7 +72,7 @@ int main()
 	}
 
 	std::regex r("ol.*");
-	cout << patterns::levenshtein_distance(string("ololo"), string("olkaoslo"))
+	cout << patterns::levenshtein_distance(string("troll"), string("trall"))
 			<< endl;
 	cout << std::regex_match("ololo", r) << endl;
 	cout << std::regex_match("trololo", r) << endl;
