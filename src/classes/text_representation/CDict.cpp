@@ -71,7 +71,7 @@ void CDict::parseMysterm(const std::string& filename)
 	while (!in.eof())
 	{
 		in.getline(line, 1024);
-		std::string s(line), first_form, get_form, type;
+		std::string first_form, get_form, type;
 		std::smatch m;
 		std::stringstream text_strteam(line);
 
@@ -81,7 +81,14 @@ void CDict::parseMysterm(const std::string& filename)
 
 		//std::cout << "1: " << get_form << " 2: " << first_form << " 3: " << type
 		//		<< std::endl;
-		CWord w(first_form);
+
+
+		//std::wchar_t *buffer = new std::wchar_t[first_form.size()];
+		//iconv(cd, first_form.size(), first_form.c_str(), first_form.size(), buffer);
+
+
+
+		CWord w(utf8to16(first_form));
 		w.wordType = w_default;
 		if ("S" == type)
 			w.wordType = w_noun;
@@ -102,10 +109,13 @@ void CDict::analysis()
 
 	std::vector<uint> size_dist_tab;
 	size_dist_tab.resize(100, 100);
-	for (int i = 0; i < dictionary_by_length.size(); i++)
+	for (uint i = 0; i < dictionary_by_length.size(); i++)
 	{
+		if(i%1000 == 0)
+			std::cout<< i <<" of " << dictionary_by_length.size() <<std::endl;
+
 		auto leni = dictionary_by_length[i]->value.length();
-		for (int j = i + 1; j < dictionary_by_length.size(); j++)
+		for (uint j = i + 1; j < dictionary_by_length.size(); j++)
 		{
 			auto lenj = dictionary_by_length[j]->value.length();
 			if ((lenj - leni) > size_dist_tab[leni])
@@ -137,7 +147,7 @@ CDict::~CDict()
 	}
 }
 
-int CDict::getMaxLevenshteinDist(std::string val)
+int CDict::getMaxLevenshteinDist(std::wstring val)
 {
 	// TODO add calculation with dictionary
 	return 2;
@@ -157,8 +167,8 @@ CWord CDict::nearestLevenshteinWord(CWord& word)
 	auto lower_length_bound = std::max(word.value.length() - max_dist, t);
 	auto upper_length_bound = word.value.length() + max_dist;
 
-	CWord lower_bound_word(std::string(lower_length_bound, 'a'));
-	CWord upper_bound_word(std::string(upper_length_bound, 'a'));
+	CWord lower_bound_word(std::wstring(lower_length_bound, 'a'));
+	CWord upper_bound_word(std::wstring(upper_length_bound, 'a'));
 
 	std::vector<CWord*>::iterator lower_iterator = std::lower_bound(
 			dictionary_by_length.begin(), dictionary_by_length.end(),

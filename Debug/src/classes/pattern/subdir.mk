@@ -6,17 +6,20 @@
 CPP_SRCS += \
 ../src/classes/pattern/CDelay.cpp \
 ../src/classes/pattern/CTextPattern.cpp \
-../src/classes/pattern/CTokenPattern.cpp 
+../src/classes/pattern/CTokenPattern.cpp \
+../src/classes/pattern/libmathing.cpp 
 
 OBJS += \
 ./src/classes/pattern/CDelay.o \
 ./src/classes/pattern/CTextPattern.o \
-./src/classes/pattern/CTokenPattern.o 
+./src/classes/pattern/CTokenPattern.o \
+./src/classes/pattern/libmathing.o 
 
 CPP_DEPS += \
 ./src/classes/pattern/CDelay.d \
 ./src/classes/pattern/CTextPattern.d \
-./src/classes/pattern/CTokenPattern.d 
+./src/classes/pattern/CTokenPattern.d \
+./src/classes/pattern/libmathing.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

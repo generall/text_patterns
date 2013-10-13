@@ -26,7 +26,7 @@ class CToken
 
 public:
 
-	std::string value;
+	std::wstring value;
 
 	CToken();
 	CToken(TokenType t);

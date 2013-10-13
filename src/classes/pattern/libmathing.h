@@ -8,8 +8,10 @@
 #ifndef LIBMATHING_H_
 #define LIBMATHING_H_
 
+#include <string>
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
 
 typedef unsigned int uint;
 
@@ -19,7 +21,7 @@ namespace patterns
 template<class T>
 uint levenshtein_distance(const T & src, const T & dst)
 {
-	if(src == dst)
+	if (src == dst)
 		return 0;
 
 	const uint m = src.size();
@@ -33,7 +35,9 @@ uint levenshtein_distance(const T & src, const T & dst)
 		return m;
 	}
 
-	std::vector<std::vector<uint> > l_matrix((std::vector<std::vector<uint> >::size_type) (m + 1), std::vector<uint>() );
+	std::vector<std::vector<uint> > l_matrix(
+			(std::vector<std::vector<uint> >::size_type) (m + 1),
+			std::vector<uint>());
 
 	for (uint i = 0; i <= m; ++i)
 	{
@@ -62,6 +66,8 @@ uint levenshtein_distance(const T & src, const T & dst)
 
 	return l_matrix[m][n];
 }
+std::wstring utf8to16(const std::string &s);
+std::string utf16to8(const std::wstring &ws);
 
 }
 

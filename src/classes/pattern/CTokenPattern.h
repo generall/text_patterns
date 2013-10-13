@@ -23,14 +23,14 @@ class CTokenPattern
 {
 public:
 	TypeOfMatching typeOfMatching;
-	std::string value;
+	std::wstring value;
 	uint delta;
 	TokenType tokenType = type_word;
 
 	bool compare(CToken token);
 
 	CTokenPattern();
-	CTokenPattern(uint d, std::string v);// auto Levenshtein constructor
+	CTokenPattern(uint d, std::wstring v);// auto Levenshtein constructor
 	CTokenPattern(TypeOfMatching t);
 	virtual ~CTokenPattern();
 };

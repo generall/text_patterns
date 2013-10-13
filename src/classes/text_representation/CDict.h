@@ -14,6 +14,9 @@
 #include <algorithm>
 #include <iostream>
 #include <math.h>
+#include <iconv.h>
+#include <wchar.h>
+#include <wctype.h>
 #include "CWord.h"
 #include "../pattern/libmathing.h"
 
@@ -30,7 +33,7 @@ class CDict
 	bool reorganised = false;
 
 	void reorganiseToWork();
-	int getMaxLevenshteinDist(std::string val);
+	int getMaxLevenshteinDist(std::wstring val);
 
 public:
 
