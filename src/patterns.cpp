@@ -12,6 +12,8 @@
 #include "classes/pattern/CTextPattern.h"
 #include "classes/text_representation/CWord.h"
 #include "classes/text_representation/CDict.h"
+#include "classes/text_representation/CText.h"
+
 using namespace std;
 
 void pause(char *label)
@@ -48,11 +50,8 @@ bool textPatternsTest()
 	temp_pair = std::make_pair(delay, tokenPattern);
 	tp.addBack(temp_pair);
 
-	pause("pattern found");
 
 	int res = tp.compare(v_text);
-
-	pause("compare ends");
 
 
 	if (res == 2)
@@ -62,32 +61,36 @@ bool textPatternsTest()
 
 bool loadDictTest()
 {
-	pause("start loadDictTest");
 
 	patterns::CDict d;
-	d.parseMysterm("/home/generall/ydict_mid.txt");
+	d.parseMysterm("/home/generall/ydict_test.txt");
 	patterns::CWord w1(L"тиран");
 	patterns::CWord w2(L"ololo");
 	patterns::CWord w3(L"тиротрон");
 
-	pause("starting utf16to8");
 
 	std::cout << patterns::utf16to8(d.nearestLevenshteinWord(w3).value)
 			<< std::endl;
 
-	pause("starting analysis");
 
-	d.analysis();
+	//d.analysis(); pointless
 
-	pause("starting findWord");
 
 	return d.findWord(w1) != -1 && d.findWord(w2) == -1;
+}
+
+bool loadTextTest()
+{
+	patterns::CText asimov;
+	asimov.loadFromMytsem("/home/generall/asimov_decoded.txt");
+	asimov.performStatistics();
+	return true;
 }
 
 int main()
 {
 
-	if (textPatternsTest() && loadDictTest())
+	if (textPatternsTest() && loadDictTest() && loadTextTest())
 	{
 		cout << "win" << endl;
 	}

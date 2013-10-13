@@ -6,18 +6,21 @@
 CPP_SRCS += \
 ../src/classes/text_representation/CDict.cpp \
 ../src/classes/text_representation/CPunctuation.cpp \
+../src/classes/text_representation/CText.cpp \
 ../src/classes/text_representation/CToken.cpp \
 ../src/classes/text_representation/CWord.cpp 
 
 OBJS += \
 ./src/classes/text_representation/CDict.o \
 ./src/classes/text_representation/CPunctuation.o \
+./src/classes/text_representation/CText.o \
 ./src/classes/text_representation/CToken.o \
 ./src/classes/text_representation/CWord.o 
 
 CPP_DEPS += \
 ./src/classes/text_representation/CDict.d \
 ./src/classes/text_representation/CPunctuation.d \
+./src/classes/text_representation/CText.d \
 ./src/classes/text_representation/CToken.d \
 ./src/classes/text_representation/CWord.d 
 

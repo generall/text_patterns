@@ -12,17 +12,17 @@ namespace patterns
 
 CPunctuation::CPunctuation(): punctuationType(p_default)
 {
-	// TODO Auto-generated constructor stub
-
+	setType(type_punctuation);
 }
 
 CPunctuation::CPunctuation(PunctuationType p) : punctuationType(p)
 {
-
+	setType(type_punctuation);
 }
 
 CPunctuation::~CPunctuation()
 {
+
 	// TODO Auto-generated destructor stub
 }
 
