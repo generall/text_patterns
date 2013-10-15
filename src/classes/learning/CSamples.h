@@ -15,6 +15,8 @@
 #include <iostream>
 #include <fstream>
 #include "../text_representation/CText.h"
+#include "../pattern/CTextPattern.h"
+
 
 namespace patterns
 {
@@ -28,7 +30,15 @@ public:
 
 	std::map<std::string, std::vector<CText *> > samples;
 
+	std::map<std::string, std::vector<std::pair<CWord *, int> > >  statistic;
+
 	void loadFromFiles(std::string dir, bool has_puncluation = false, bool calcStatistics = false);
+
+	void testPattern(CTextPattern &pattern);
+
+	void calcGroupStat();
+
+	void summStatistics(std::map<CWord*, int, CWordCompare> &s1, const std::map<CWord*, int, CWordCompare> &s2);
 
 	CSamples();
 	virtual ~CSamples();

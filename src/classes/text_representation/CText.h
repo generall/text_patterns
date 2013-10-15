@@ -20,6 +20,7 @@
 #include "CPunctuation.h"
 #include "CWord.h"
 #include "../pattern/libmathing.h"
+#include "../pattern/CTextPattern.h"
 
 namespace patterns
 {
@@ -28,13 +29,19 @@ class CText
 {
 
 	std::vector<CToken*> text;
-	std::map<CWord*, int, CWordCompare> statistics;
-	std::vector<std::pair<CWord *, int>> stat_by_friquency;
+
 
 public:
 
+	std::map<CWord*, int, CWordCompare> statistics;
+	std::vector<std::pair<CWord *, int>> stat_by_friquency;
+
 	void loadFromMytsem(std::string filename, bool has_punctuation = true);
 	void performStatistics();
+	int testPatetrn(CTextPattern &pattern);
+
+
+
 	CText();
 	virtual ~CText();
 };

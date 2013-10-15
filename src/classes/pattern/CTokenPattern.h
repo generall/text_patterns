@@ -27,7 +27,7 @@ public:
 	uint delta;
 	TokenType tokenType = type_word;
 
-	bool compare(CToken token);
+	bool compare(CToken &token);
 
 	CTokenPattern();
 	CTokenPattern(uint d, std::wstring v);// auto Levenshtein constructor

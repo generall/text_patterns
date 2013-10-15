@@ -18,7 +18,7 @@ CTokenPattern::CTokenPattern() :
 
 }
 
-bool CTokenPattern::compare(CToken token)
+bool CTokenPattern::compare(CToken &token)
 {
 	switch (typeOfMatching)
 	{

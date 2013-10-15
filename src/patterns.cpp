@@ -88,6 +88,26 @@ bool loadSamplesTest()
 	patterns::CSamples s;
 	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false,
 			true);
+
+	wstring recv;
+	wcin >> recv;
+	while (recv != L"exit")
+	{
+		patterns::CDelay delay;
+		patterns::CTextPattern tp;
+		patterns::CTokenPattern tokenPattern(2, recv.c_str());
+
+		delay.maxDelayNumber = 0;
+		tokenPattern.typeOfMatching = patterns::m_full;
+		auto temp_pair = std::make_pair(delay, tokenPattern);
+		tp.addBack(temp_pair);
+
+		s.testPattern(tp);
+		wcin >> recv;
+	}
+
+	s.calcGroupStat();
+
 	if (s.samples.size() == 5)
 	{
 		std::cout << "sample true" << std::endl;
@@ -103,7 +123,8 @@ bool loadSamplesTest()
 int main()
 {
 
-	if (textPatternsTest() && loadDictTest() && loadTextTest() && loadSamplesTest())
+	if (textPatternsTest() && loadDictTest() && loadTextTest()
+			&& loadSamplesTest())
 	{
 		cout << "win" << endl;
 	}

@@ -110,4 +110,11 @@ CText::~CText()
 	}
 }
 
+int CText::testPatetrn(CTextPattern& pattern)
+{
+	return pattern.compare(text);
+}
+
+
 } /* namespace patterns */
+

@@ -26,6 +26,8 @@ void CSamples::loadFromFiles(std::string dir, bool has_puncluation,
 	{
 		while (!flist.eof())
 		{
+
+			//fix problem with newline at the end
 			std::string filename, classter;
 			std::getline(flist, filename, ' ');
 			std::getline(flist, classter);
@@ -40,6 +42,42 @@ void CSamples::loadFromFiles(std::string dir, bool has_puncluation,
 	flist.close();
 }
 
+void CSamples::summStatistics(std::map<CWord*, int, CWordCompare>& s1,
+		const std::map<CWord*, int, CWordCompare>& s2)
+{
+	for (auto x : s2)
+	{
+		s1[x.first] += x.second;
+	}
+}
+
+void CSamples::calcGroupStat()
+{
+	for (auto x : samples)
+	{
+		std::map<CWord*, int, CWordCompare> s;
+		for (auto y : x.second)
+		{
+			summStatistics(s, y->statistics);
+		}
+		std::vector<std::pair<CWord *, int>> stat_by_friquency;
+		for (auto y : s)
+		{
+			stat_by_friquency.push_back(std::make_pair(y.first, y.second));
+		}
+		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(),
+				StatByFriquencyCmp());
+
+		std::cout << "---------" << x.first << "-------" << std::endl;
+		for (int i = 0; i < 15; i++)
+		{
+			std::cout << utf16to8(stat_by_friquency[i].first->value) << "\t = "
+					<< stat_by_friquency[i].second << std::endl;
+		}
+		statistic[x.first] = stat_by_friquency;
+	}
+}
+
 CSamples::~CSamples()
 {
 	for (auto x : samples)
@@ -52,4 +90,19 @@ CSamples::~CSamples()
 	// TODO Auto-generated destructor stub
 }
 
+void patterns::CSamples::testPattern(CTextPattern& pattern)
+{
+	for (auto x : samples)
+	{
+		int n = 0;
+		for (auto y : x.second)
+		{
+			n += y->testPatetrn(pattern) > 0 ? 1 : 0;
+		}
+		std::cout << x.first << ": " << n << " of " << x.second.size()
+				<< std::endl;
+	}
+}
+
 } /* namespace patterns */
+
