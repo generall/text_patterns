@@ -16,7 +16,7 @@ CText::CText()
 
 }
 
-void CText::loadFromMytsem(std::string filename)
+void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 {
 	std::setlocale(LC_ALL, "en_US.UTF-8");
 	std::fstream in(filename.c_str(), std::ios::in);
@@ -28,7 +28,7 @@ void CText::loadFromMytsem(std::string filename)
 		//if punctuation
 		if (std::strlen(line) != 0)
 		{
-			if (n % 2 == 0)
+			if (n % 2 == 0 && has_punctuation)
 			{
 				CPunctuation *p = new CPunctuation();
 				switch (line[0])
@@ -66,6 +66,7 @@ void CText::loadFromMytsem(std::string filename)
 		}
 		n++;
 	}
+	in.close();
 }
 
 void CText::performStatistics()
@@ -91,16 +92,22 @@ void CText::performStatistics()
 	}
 	std::sort(stat_by_friquency.begin(), stat_by_friquency.end(),
 			StatByFriquencyCmp());
+
+	/*
 	for (int i = 0; i < 10; i++)
 	{
 		std::cout << utf16to8(stat_by_friquency[i].first->value) << "\t = "
 				<< stat_by_friquency[i].second << std::endl;
 	}
+	*/
 }
 
 CText::~CText()
 {
-	// TODO Auto-generated destructor stub
+	for (auto x : text)
+	{
+		delete x;
+	}
 }
 
 } /* namespace patterns */

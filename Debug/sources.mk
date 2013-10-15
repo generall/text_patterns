@@ -26,4 +26,5 @@ SUBDIRS := \
 src \
 src/classes/text_representation \
 src/classes/pattern \
+src/classes/learning \
 

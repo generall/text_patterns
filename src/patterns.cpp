@@ -13,6 +13,7 @@
 #include "classes/text_representation/CWord.h"
 #include "classes/text_representation/CDict.h"
 #include "classes/text_representation/CText.h"
+#include "classes/learning/CSamples.h"
 
 using namespace std;
 
@@ -50,9 +51,7 @@ bool textPatternsTest()
 	temp_pair = std::make_pair(delay, tokenPattern);
 	tp.addBack(temp_pair);
 
-
 	int res = tp.compare(v_text);
-
 
 	if (res == 2)
 		return true;
@@ -68,13 +67,10 @@ bool loadDictTest()
 	patterns::CWord w2(L"ololo");
 	patterns::CWord w3(L"тиротрон");
 
-
 	std::cout << patterns::utf16to8(d.nearestLevenshteinWord(w3).value)
 			<< std::endl;
 
-
 	//d.analysis(); pointless
-
 
 	return d.findWord(w1) != -1 && d.findWord(w2) == -1;
 }
@@ -87,10 +83,27 @@ bool loadTextTest()
 	return true;
 }
 
+bool loadSamplesTest()
+{
+	patterns::CSamples s;
+	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false,
+			true);
+	if (s.samples.size() == 5)
+	{
+		std::cout << "sample true" << std::endl;
+		return true;
+	}
+	else
+	{
+		std::cout << "sample fails" << std::endl;
+		return false;
+	}
+}
+
 int main()
 {
 
-	if (textPatternsTest() && loadDictTest() && loadTextTest())
+	if (textPatternsTest() && loadDictTest() && loadTextTest() && loadSamplesTest())
 	{
 		cout << "win" << endl;
 	}

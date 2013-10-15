@@ -33,7 +33,7 @@ class CText
 
 public:
 
-	void loadFromMytsem(std::string filename);
+	void loadFromMytsem(std::string filename, bool has_punctuation = true);
 	void performStatistics();
 	CText();
 	virtual ~CText();

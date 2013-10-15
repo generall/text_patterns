@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include src/classes/text_representation/subdir.mk
 -include src/classes/pattern/subdir.mk
+-include src/classes/learning/subdir.mk
 -include src/subdir.mk
 -include subdir.mk
 -include objects.mk
