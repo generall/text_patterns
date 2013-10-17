@@ -53,6 +53,7 @@ void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 
 				std::getline(text_strteam, first_form, ' ');
 				std::getline(text_strteam, type);
+				std::transform(first_form.begin(), first_form.end(), first_form.begin(), ::tolower);
 				CWord *w = new CWord(first_form);
 				w->wordType = w_default;
 				if ("S" == type)
@@ -61,6 +62,7 @@ void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 					w->wordType = w_adjective;
 				if ("V" == type)
 					w->wordType = w_verb;
+
 				text.push_back(w);
 			}
 		}
@@ -110,7 +112,7 @@ CText::~CText()
 	}
 }
 
-int CText::testPatetrn(TPatternInterface& pattern)
+int CText::testPatetrn(const TPatternInterface& pattern)
 {
 	return pattern.cmp(text);
 }

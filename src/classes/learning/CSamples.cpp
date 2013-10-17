@@ -16,8 +16,7 @@ CSamples::CSamples()
 
 }
 
-void CSamples::loadFromFiles(std::string dir, bool has_puncluation,
-		bool calcStatistics)
+void CSamples::loadFromFiles(std::string dir, bool has_puncluation, bool calcStatistics)
 {
 
 	//загрузить список из flist.txt
@@ -65,19 +64,102 @@ void CSamples::calcGroupStat()
 		{
 			stat_by_friquency.push_back(std::make_pair(y.first, y.second));
 		}
-		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(),
-				StatByFriquencyCmp());
+		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
 
 		std::cout << "---------" << x.first << "-------" << std::endl;
 		for (int i = 0; i < 15; i++)
 		{
-			std::cout << stat_by_friquency[i].first->value << "\t = "
-					<< stat_by_friquency[i].second << std::endl;
+			std::cout << stat_by_friquency[i].first->value << "\t = " << stat_by_friquency[i].second
+					<< std::endl;
 		}
 		statistic[x.first] = stat_by_friquency;
 	}
 }
 
+void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask)
+{
+	statistic.clear();
+	for (auto x : mask)
+	{
+		if (samples[x.first].size() != x.second.size())
+			throw std::logic_error("wrong mask");
+
+		std::map<CWord*, int, CWordCompare> s;
+
+		for (uint i = 0; i < samples[x.first].size(); i++)
+		{
+			if (x.second[i])
+			{
+				summStatistics(s, samples[x.first][i]->statistics);
+
+				std::vector<std::pair<CWord *, int>> stat_by_friquency;
+				for (auto y : s)
+				{
+					stat_by_friquency.push_back(std::make_pair(y.first, y.second));
+				}
+				std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
+				statistic[x.first] = stat_by_friquency;
+			}
+		}
+	}
+}
+
+void CSamples::testPattern(const TPatternInterface& pattern,
+		std::map<std::string, std::vector<bool> >& mask, bool accept, bool renew)
+{
+	lastPatterStatistic.clear();
+	for (auto x : mask)
+	{
+		int n = 0;
+		int m = 0;
+		lastAcceptedMask[x.first] = std::vector<bool>();
+
+		auto t = samples[x.first];
+		for (uint i = 0; i < t.size(); i++)
+		{ //итерируемся по всем текстам
+
+			if (x.second[i] == accept)
+			{ // пропускаем те, которые запрещены маской
+				uint test = t[i]->testPatetrn(pattern) > 0 ? 1 : 0;
+				n += test;
+				lastAcceptedMask[x.first][i] = (test > 0 ? renew : !renew); // обновляем маску (дополняем до общего, или отнимаем от общего)
+				m++;
+			}
+		}
+		if (n == 0)
+		{
+			lastAcceptedMask.erase(x.first);
+		}
+		lastPatterStatistic[x.first] = std::make_pair(n, m);
+		std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
+	}
+}
+
+void CSamples::testPattern(const TPatternInterface& pattern)
+{
+	lastAcceptedMask.clear();
+	lastPatterStatistic.clear();
+	for (auto x : samples)
+	{
+		int n = 0;
+		int m = 0;
+		lastAcceptedMask[x.first] = std::vector<bool>();
+
+		for (auto y : x.second)
+		{
+			uint test = y->testPatetrn(pattern) > 0 ? 1 : 0;
+			n += test;
+			lastAcceptedMask[x.first].push_back(test > 0 ? true : false);
+			m++;
+		}
+		if (n == 0)
+		{
+			lastAcceptedMask.erase(x.first);
+		}
+		lastPatterStatistic[x.first] = std::make_pair(n, m);
+		std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
+	}
+}
 
 CSamples::~CSamples()
 {
@@ -87,20 +169,6 @@ CSamples::~CSamples()
 		{
 			delete y;
 		}
-	}
-}
-
-void patterns::CSamples::testPattern(TPatternInterface& pattern)
-{
-	for (auto x : samples)
-	{
-		int n = 0;
-		for (auto y : x.second)
-		{
-			n += y->testPatetrn(pattern) > 0 ? 1 : 0;
-		}
-		std::cout << x.first << ": " << n << " of " << x.second.size()
-				<< std::endl;
 	}
 }
 

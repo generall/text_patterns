@@ -38,7 +38,7 @@ public:
 
 	void loadFromMytsem(std::string filename, bool has_punctuation = true);
 	void performStatistics();
-	int testPatetrn(TPatternInterface &pattern);
+	int testPatetrn(const TPatternInterface &pattern);
 
 
 	CText();

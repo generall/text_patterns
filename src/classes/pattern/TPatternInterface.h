@@ -17,8 +17,8 @@ namespace patterns
 class TPatternInterface
 {
 public:
-	virtual uint cmp(std::vector<CToken *> &text) = 0;
-	virtual uint cmp(std::vector<CToken> &text) = 0;
+	virtual uint cmp(std::vector<CToken *> &text) const = 0;
+	virtual uint cmp(std::vector<CToken> &text) const = 0;
 
 	virtual ~TPatternInterface();
 };

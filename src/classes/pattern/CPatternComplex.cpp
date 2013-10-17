@@ -16,7 +16,22 @@ CPatternComplex::CPatternComplex()
 
 }
 
-uint CPatternComplex::cmp(std::vector<CToken*>& text)
+uint CPatternComplex::cmp(std::vector<CToken*>& text) const
+{
+	for(auto x: DNF)
+	{
+		bool flag = true;
+		for(auto y: x)
+		{
+			flag &= y.compare(text) > 0 ? true : false;
+		}
+		if(flag)
+			return 1;
+	}
+	return 0;
+}
+
+ uint CPatternComplex::cmp(std::vector<CToken>& text) const
 {
 	for(auto x: DNF)
 	{

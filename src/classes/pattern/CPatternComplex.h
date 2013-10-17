@@ -21,7 +21,8 @@ class CPatternComplex: public TPatternInterface
 public:
 	std::vector<std::vector<CTextPattern> > DNF;
 
-	virtual uint cmp(std::vector<CToken *> &text);
+	virtual uint cmp(std::vector<CToken *> &text) const;
+	virtual uint cmp(std::vector<CToken> &text) const;
 
 	CPatternComplex();
 	virtual ~CPatternComplex();

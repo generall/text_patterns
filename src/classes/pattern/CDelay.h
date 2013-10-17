@@ -22,7 +22,7 @@ public:
 	std::vector<CTokenPattern> unacceptablePatterns;
 
 
-	bool isDelayAccaptable(CToken &t); //true, if delay acceptable
+	bool isDelayAccaptable(const CToken &t) const; //true, if delay accep
 	void addUnacceptablePattern(CTokenPattern &p);
 
 	CDelay();

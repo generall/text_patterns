@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <locale>
+#include <functional>
 #include "classes/pattern/CTextPattern.h"
 #include "classes/pattern/CPatternComplex.h"
 #include "classes/text_representation/CWord.h"
@@ -68,8 +69,7 @@ bool loadDictTest()
 	patterns::CWord w2("ololo");
 	patterns::CWord w3("тиротрон");
 
-	std::cout << d.nearestLevenshteinWord(w3).value
-			<< std::endl;
+	std::cout << d.nearestLevenshteinWord(w3).value << std::endl;
 
 	//d.analysis(); pointless
 
@@ -94,16 +94,26 @@ bool loadSamplesTest()
 	cin >> recv;
 	while (recv != "exit")
 	{
-		patterns::CDelay delay;
-		patterns::CTextPattern tp;
-		patterns::CTokenPattern tokenPattern(2, recv.c_str());
+		patterns::CPatternComplex complex;
 
-		delay.maxDelayNumber = 0;
-		tokenPattern.typeOfMatching = patterns::m_full;
-		auto temp_pair = std::make_pair(delay, tokenPattern);
-		tp.addBack(temp_pair);
+		string or_val;
+		cin >> or_val;
+		while (or_val != "break")
+		{
+			patterns::CDelay delay;
+			patterns::CTextPattern tp;
+			patterns::CTokenPattern tokenPattern(2, or_val);
 
-		s.testPattern(tp);
+			delay.maxDelayNumber = 0;
+			tokenPattern.typeOfMatching = patterns::m_full;
+			auto temp_pair = std::make_pair(delay, tokenPattern);
+			tp.addBack(temp_pair);
+			std::vector<patterns::CTextPattern> impl;
+			impl.push_back(tp);
+			complex.DNF.push_back(impl);
+			cin >> or_val;
+		}
+		s.testPattern(complex);
 		cin >> recv;
 	}
 
@@ -123,9 +133,8 @@ bool loadSamplesTest()
 
 int main()
 {
-
-	if (textPatternsTest()// && loadDictTest() && loadTextTest()
-			&& loadSamplesTest())
+	if (textPatternsTest() // && loadDictTest() && loadTextTest()
+	&& loadSamplesTest())
 	{
 		cout << "win" << endl;
 	}

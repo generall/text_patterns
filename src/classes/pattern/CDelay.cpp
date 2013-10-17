@@ -17,7 +17,7 @@ CDelay::CDelay()
 
 }
 
-bool CDelay::isDelayAccaptable(CToken &t)
+bool CDelay::isDelayAccaptable(const CToken &t) const
 {
 	for(CTokenPattern p : unacceptablePatterns)
 	{
