@@ -28,7 +28,7 @@ bool CTokenPattern::compare(const CToken &token) const
 		return value == token.value && tokenType == token.getType();
 	case m_regexp:
 	{
-		std::regex txt_regex(value,std::regex_constants::basic);
+		std::regex txt_regex(value, std::regex_constants::basic);
 		return std::regex_match(token.value, txt_regex);
 	}
 	case m_type:
@@ -37,7 +37,7 @@ bool CTokenPattern::compare(const CToken &token) const
 	return false;
 }
 
-CTokenPattern::CTokenPattern(uint d, std::string v)
+CTokenPattern::CTokenPattern(uint d,const std::string &v)
 {
 	delta = d;
 	value = v;
@@ -55,4 +55,12 @@ CTokenPattern::CTokenPattern(TypeOfMatching t) :
 	delta = 0;
 }
 
+CTokenPattern::CTokenPattern(const std::string &v)
+{
+	delta = 0;
+	value = v;
+	typeOfMatching = m_full;
 }
+
+}
+

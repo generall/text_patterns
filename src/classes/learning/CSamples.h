@@ -29,8 +29,11 @@ public:
 
 	std::map<std::string, std::vector<std::pair<CWord *, int> > > statistic;
 
+	std::map<std::string, std::vector<std::pair<CWord *, int> > > lastStatistic;
 	std::map<std::string, std::vector<bool> > lastAcceptedMask;
 	std::map<std::string, std::pair<uint, uint> > lastPatterStatistic;
+
+
 
 	void loadFromFiles(std::string dir, bool has_puncluation = false, bool calcStatistics = false);
 

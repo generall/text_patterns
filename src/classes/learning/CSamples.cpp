@@ -67,18 +67,19 @@ void CSamples::calcGroupStat()
 		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
 
 		std::cout << "---------" << x.first << "-------" << std::endl;
-		for (int i = 0; i < 15; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			std::cout << stat_by_friquency[i].first->value << "\t = " << stat_by_friquency[i].second
 					<< std::endl;
 		}
 		statistic[x.first] = stat_by_friquency;
 	}
+	lastStatistic = statistic;
 }
 
 void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask)
 {
-	statistic.clear();
+	lastStatistic.clear();
 	for (auto x : mask)
 	{
 		if (samples[x.first].size() != x.second.size())
@@ -98,7 +99,7 @@ void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask)
 					stat_by_friquency.push_back(std::make_pair(y.first, y.second));
 				}
 				std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
-				statistic[x.first] = stat_by_friquency;
+				lastStatistic[x.first] = stat_by_friquency;
 			}
 		}
 	}
@@ -131,7 +132,7 @@ void CSamples::testPattern(const TPatternInterface& pattern,
 			lastAcceptedMask.erase(x.first);
 		}
 		lastPatterStatistic[x.first] = std::make_pair(n, m);
-		std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
+		//std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
 	}
 }
 
@@ -157,9 +158,10 @@ void CSamples::testPattern(const TPatternInterface& pattern)
 			lastAcceptedMask.erase(x.first);
 		}
 		lastPatterStatistic[x.first] = std::make_pair(n, m);
-		std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
+		//std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
 	}
 }
+
 
 CSamples::~CSamples()
 {

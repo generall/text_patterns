@@ -21,6 +21,8 @@ class CPatternComplex: public TPatternInterface
 public:
 	std::vector<std::vector<CTextPattern> > DNF;
 
+	void add(const CTextPattern&);//add as option, not conjunction
+	void del(); //delete last option
 	virtual uint cmp(std::vector<CToken *> &text) const;
 	virtual uint cmp(std::vector<CToken> &text) const;
 

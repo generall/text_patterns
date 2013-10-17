@@ -30,7 +30,8 @@ public:
 	bool compare(const CToken &token) const;
 
 	CTokenPattern();
-	CTokenPattern(uint d, std::string v);// auto Levenshtein constructor
+	CTokenPattern(uint d,const std::string &v);// auto Levenshtein constructor
+	CTokenPattern(const std::string &v);//auto full comparasion constructor
 	CTokenPattern(TypeOfMatching t);
 	virtual ~CTokenPattern();
 };

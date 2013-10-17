@@ -187,6 +187,11 @@ void CTextPattern::addFront(std::pair<CDelay, CTokenPattern>& p)
 	return numOfFoundPatterns;
 }
 
+void CTextPattern::del()
+{
+	pattern.erase(pattern.end() - 1);
+}
+
 CTextPattern::~CTextPattern()
 {
 
@@ -204,3 +209,8 @@ CTextPattern::~CTextPattern()
 }
 
 } /* namespace patterns */
+
+void patterns::CTextPattern::add(const CTokenPattern& p)
+{
+	pattern.push_back(std::make_pair(CDelay(),p));
+}

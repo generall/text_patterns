@@ -41,3 +41,8 @@ CDelay::~CDelay()
 }
 
 } /* namespace patterns */
+
+patterns::CDelay::CDelay(uint n)
+{
+	maxDelayNumber = n;
+}

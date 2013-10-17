@@ -18,29 +18,35 @@ CPatternComplex::CPatternComplex()
 
 uint CPatternComplex::cmp(std::vector<CToken*>& text) const
 {
-	for(auto x: DNF)
+	if (DNF.size() == 0)
+		return 1; //accep by default
+
+	for (auto x : DNF)
 	{
 		bool flag = true;
-		for(auto y: x)
+		for (auto y : x)
 		{
 			flag &= y.compare(text) > 0 ? true : false;
 		}
-		if(flag)
+		if (flag)
 			return 1;
 	}
 	return 0;
 }
 
- uint CPatternComplex::cmp(std::vector<CToken>& text) const
+uint CPatternComplex::cmp(std::vector<CToken>& text) const
 {
-	for(auto x: DNF)
+	if (DNF.size() == 0)
+		return 1;
+
+	for (auto x : DNF)
 	{
 		bool flag = true;
-		for(auto y: x)
+		for (auto y : x)
 		{
 			flag &= y.compare(text) > 0 ? true : false;
 		}
-		if(flag)
+		if (flag)
 			return 1;
 	}
 	return 0;
@@ -52,3 +58,15 @@ CPatternComplex::~CPatternComplex()
 }
 
 } /* namespace patterns */
+
+void patterns::CPatternComplex::add(const CTextPattern &cTextPattern)
+{
+	std::vector<patterns::CTextPattern> impl;
+	impl.push_back(cTextPattern);
+	DNF.push_back(impl);
+}
+
+void patterns::CPatternComplex::del()
+{
+	DNF.erase(DNF.end() - 1);
+}

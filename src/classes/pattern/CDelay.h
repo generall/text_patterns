@@ -26,6 +26,7 @@ public:
 	void addUnacceptablePattern(CTokenPattern &p);
 
 	CDelay();
+	CDelay(uint n);
 	virtual ~CDelay();
 };
 

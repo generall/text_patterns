@@ -24,6 +24,8 @@ public:
 	std::list<std::pair<CDelay, CTokenPattern> > pattern;
 
 	void addBack(std::pair<CDelay, CTokenPattern> &p);
+	void add(const CTokenPattern &p);// for single pattern
+	void del();// delete right
 	void addFront(std::pair<CDelay, CTokenPattern> &p);
 	uint compare(std::vector<CToken> &data) const;
 	uint compare(std::vector<CToken*> &data) const;
