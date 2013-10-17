@@ -39,7 +39,7 @@ public:
 	void loadFromMytsem(std::string filename, bool has_punctuation = true);
 	void performStatistics();
 	int testPatetrn(CTextPattern &pattern);
-
+	bool testComplex(CPatternComplex &complex);
 
 
 	CText();

@@ -71,11 +71,16 @@ void CSamples::calcGroupStat()
 		std::cout << "---------" << x.first << "-------" << std::endl;
 		for (int i = 0; i < 15; i++)
 		{
-			std::cout << utf16to8(stat_by_friquency[i].first->value) << "\t = "
+			std::cout << stat_by_friquency[i].first->value << "\t = "
 					<< stat_by_friquency[i].second << std::endl;
 		}
 		statistic[x.first] = stat_by_friquency;
 	}
+}
+
+void CSamples::testComplex(CPatternComplex& pattern)
+{
+
 }
 
 CSamples::~CSamples()
@@ -87,7 +92,6 @@ CSamples::~CSamples()
 			delete y;
 		}
 	}
-	// TODO Auto-generated destructor stub
 }
 
 void patterns::CSamples::testPattern(CTextPattern& pattern)

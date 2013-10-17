@@ -21,7 +21,7 @@ CWord::CWord(LimbType l, WordType w) :
 	setType(type_word);
 }
 
-CWord::CWord(std::wstring s) :
+CWord::CWord(std::string s) :
 		limbType(l_default), wordType(w_default)
 {
 	value = s;

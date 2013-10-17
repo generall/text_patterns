@@ -16,6 +16,7 @@
 #include <fstream>
 #include "../text_representation/CText.h"
 #include "../pattern/CTextPattern.h"
+#include "../pattern/CPatternComplex.h"
 
 
 namespace patterns
@@ -35,6 +36,7 @@ public:
 	void loadFromFiles(std::string dir, bool has_puncluation = false, bool calcStatistics = false);
 
 	void testPattern(CTextPattern &pattern);
+	void testComplex(CPatternComplex &pattern);
 
 	void calcGroupStat();
 

@@ -10,6 +10,7 @@
 #include <string>
 #include <locale>
 #include "classes/pattern/CTextPattern.h"
+#include "classes/pattern/CPatternComplex.h"
 #include "classes/text_representation/CWord.h"
 #include "classes/text_representation/CDict.h"
 #include "classes/text_representation/CText.h"
@@ -28,26 +29,26 @@ bool textPatternsTest()
 {
 	std::string text =
 			"ololo this text is used to find some patterns patterns are hard to understand text is very hard too text is a nice pattern";
-	patterns::CWord word(L"");
+	patterns::CWord word("");
 	std::stringstream text_strteam(text);
 	std::vector<patterns::CToken> v_text;
 	std::string temp;
 
 	while (std::getline(text_strteam, temp, ' '))
 	{
-		word.value = patterns::utf8to16(temp);
+		word.value = temp;
 		v_text.push_back(word);
 	}
 
 	patterns::CDelay delay;
 	delay.maxDelayNumber = 5;
-	patterns::CTokenPattern tokenPattern(2, L"text");
+	patterns::CTokenPattern tokenPattern(2, "text");
 
 	patterns::CTextPattern tp;
 	auto temp_pair = std::make_pair(delay, tokenPattern);
 	tp.addBack(temp_pair);
 
-	tokenPattern.value = L"pattern";
+	tokenPattern.value = "pattern";
 	temp_pair = std::make_pair(delay, tokenPattern);
 	tp.addBack(temp_pair);
 
@@ -63,11 +64,11 @@ bool loadDictTest()
 
 	patterns::CDict d;
 	d.parseMysterm("/home/generall/ydict_test.txt");
-	patterns::CWord w1(L"тиран");
-	patterns::CWord w2(L"ololo");
-	patterns::CWord w3(L"тиротрон");
+	patterns::CWord w1("тиран");
+	patterns::CWord w2("ololo");
+	patterns::CWord w3("тиротрон");
 
-	std::cout << patterns::utf16to8(d.nearestLevenshteinWord(w3).value)
+	std::cout << d.nearestLevenshteinWord(w3).value
 			<< std::endl;
 
 	//d.analysis(); pointless
@@ -89,21 +90,24 @@ bool loadSamplesTest()
 	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false,
 			true);
 
-	wstring recv;
-	wcin >> recv;
-	while (recv != L"exit")
+	string recv;
+	cin >> recv;
+	while (recv != "exit")
 	{
 		patterns::CDelay delay;
 		patterns::CTextPattern tp;
 		patterns::CTokenPattern tokenPattern(2, recv.c_str());
+		patterns::CPatternComplex complex;
 
 		delay.maxDelayNumber = 0;
 		tokenPattern.typeOfMatching = patterns::m_full;
 		auto temp_pair = std::make_pair(delay, tokenPattern);
 		tp.addBack(temp_pair);
 
+		complex.DNF.push_back(std::vector<patterns::CTextPattern>().push_back(tp));
+
 		s.testPattern(tp);
-		wcin >> recv;
+		cin >> recv;
 	}
 
 	s.calcGroupStat();
@@ -123,7 +127,7 @@ bool loadSamplesTest()
 int main()
 {
 
-	if (textPatternsTest() && loadDictTest() && loadTextTest()
+	if (textPatternsTest()// && loadDictTest() && loadTextTest()
 			&& loadSamplesTest())
 	{
 		cout << "win" << endl;
@@ -133,10 +137,10 @@ int main()
 		cout << "fail" << endl;
 	}
 
-	std::wregex r(L"ol.*");
-	cout << patterns::levenshtein_distance(wstring(L"troll"), wstring(L"trall"))
+	std::regex r("ol.*");
+	cout << patterns::levenshtein_distance(string("troll"), string("trall"))
 			<< endl;
-	cout << std::regex_match(L"ololo", r) << endl;
-	cout << std::regex_match(L"trololo", r) << endl;
+	cout << std::regex_match("ololo", r) << endl;
+	cout << std::regex_match("trololo", r) << endl;
 	return 0;
 }

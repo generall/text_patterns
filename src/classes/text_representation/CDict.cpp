@@ -88,7 +88,7 @@ void CDict::parseMysterm(const std::string& filename)
 
 
 
-		CWord w(utf8to16(first_form));
+		CWord w(first_form);
 		w.wordType = w_default;
 		if ("S" == type)
 			w.wordType = w_noun;
@@ -147,7 +147,7 @@ CDict::~CDict()
 	}
 }
 
-int CDict::getMaxLevenshteinDist(std::wstring val)
+int CDict::getMaxLevenshteinDist(std::string val)
 {
 	// TODO add calculation with dictionary
 	return 2;
@@ -167,8 +167,8 @@ CWord CDict::nearestLevenshteinWord(CWord& word)
 	auto lower_length_bound = std::max(word.value.length() - max_dist, t);
 	auto upper_length_bound = word.value.length() + max_dist;
 
-	CWord lower_bound_word(std::wstring(lower_length_bound, 'a'));
-	CWord upper_bound_word(std::wstring(upper_length_bound, 'a'));
+	CWord lower_bound_word(std::string(lower_length_bound, 'a'));
+	CWord upper_bound_word(std::string(upper_length_bound, 'a'));
 
 	std::vector<CWord*>::iterator lower_iterator = std::lower_bound(
 			dictionary_by_length.begin(), dictionary_by_length.end(),

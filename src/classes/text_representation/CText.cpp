@@ -43,7 +43,7 @@ void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 					p->punctuationType = p_default;
 					break;
 				}
-				p->value = utf8to16(std::string(line));
+				p->value = std::string(line);
 				text.push_back(p);
 			}
 			else
@@ -53,7 +53,7 @@ void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 
 				std::getline(text_strteam, first_form, ' ');
 				std::getline(text_strteam, type);
-				CWord *w = new CWord(utf8to16(first_form));
+				CWord *w = new CWord(first_form);
 				w->wordType = w_default;
 				if ("S" == type)
 					w->wordType = w_noun;
@@ -96,7 +96,7 @@ void CText::performStatistics()
 	/*
 	for (int i = 0; i < 10; i++)
 	{
-		std::cout << utf16to8(stat_by_friquency[i].first->value) << "\t = "
+		std::cout << stat_by_friquency[i].first->value << "\t = "
 				<< stat_by_friquency[i].second << std::endl;
 	}
 	*/
@@ -115,6 +115,11 @@ int CText::testPatetrn(CTextPattern& pattern)
 	return pattern.compare(text);
 }
 
+bool CText::testComplex(CPatternComplex& complex)
+{
+	return complex.cmp(text);
+}
 
 } /* namespace patterns */
+
 

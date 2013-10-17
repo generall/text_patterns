@@ -33,7 +33,7 @@ class CDict
 	bool reorganised = false;
 
 	void reorganiseToWork();
-	int getMaxLevenshteinDist(std::wstring val);
+	int getMaxLevenshteinDist(std::string val);
 
 public:
 

@@ -30,7 +30,7 @@ public:
 	WordType wordType;
 
 	CWord();
-	CWord(std::wstring s);
+	CWord(std::string s);
 	CWord(LimbType l, WordType w);
 	virtual ~CWord();
 };
