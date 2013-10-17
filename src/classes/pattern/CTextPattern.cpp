@@ -192,4 +192,15 @@ CTextPattern::~CTextPattern()
 
 }
 
+
+uint CTextPattern::cmp(std::vector<CToken>& data)
+{
+	return compare(data);
+}
+
+uint CTextPattern::cmp(std::vector<CToken*>& data)
+{
+	return compare(data);
+}
+
 } /* namespace patterns */

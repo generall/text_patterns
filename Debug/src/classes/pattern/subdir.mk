@@ -8,6 +8,7 @@ CPP_SRCS += \
 ../src/classes/pattern/CPatternComplex.cpp \
 ../src/classes/pattern/CTextPattern.cpp \
 ../src/classes/pattern/CTokenPattern.cpp \
+../src/classes/pattern/TPatternInterface.cpp \
 ../src/classes/pattern/libmathing.cpp 
 
 OBJS += \
@@ -15,6 +16,7 @@ OBJS += \
 ./src/classes/pattern/CPatternComplex.o \
 ./src/classes/pattern/CTextPattern.o \
 ./src/classes/pattern/CTokenPattern.o \
+./src/classes/pattern/TPatternInterface.o \
 ./src/classes/pattern/libmathing.o 
 
 CPP_DEPS += \
@@ -22,6 +24,7 @@ CPP_DEPS += \
 ./src/classes/pattern/CPatternComplex.d \
 ./src/classes/pattern/CTextPattern.d \
 ./src/classes/pattern/CTokenPattern.d \
+./src/classes/pattern/TPatternInterface.d \
 ./src/classes/pattern/libmathing.d 
 
 

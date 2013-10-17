@@ -20,7 +20,7 @@
 #include "CPunctuation.h"
 #include "CWord.h"
 #include "../pattern/libmathing.h"
-#include "../pattern/CTextPattern.h"
+#include "../pattern/TPatternInterface.h"
 
 namespace patterns
 {
@@ -38,8 +38,7 @@ public:
 
 	void loadFromMytsem(std::string filename, bool has_punctuation = true);
 	void performStatistics();
-	int testPatetrn(CTextPattern &pattern);
-	bool testComplex(CPatternComplex &complex);
+	int testPatetrn(TPatternInterface &pattern);
 
 
 	CText();

@@ -78,10 +78,6 @@ void CSamples::calcGroupStat()
 	}
 }
 
-void CSamples::testComplex(CPatternComplex& pattern)
-{
-
-}
 
 CSamples::~CSamples()
 {
@@ -94,7 +90,7 @@ CSamples::~CSamples()
 	}
 }
 
-void patterns::CSamples::testPattern(CTextPattern& pattern)
+void patterns::CSamples::testPattern(TPatternInterface& pattern)
 {
 	for (auto x : samples)
 	{

@@ -97,14 +97,11 @@ bool loadSamplesTest()
 		patterns::CDelay delay;
 		patterns::CTextPattern tp;
 		patterns::CTokenPattern tokenPattern(2, recv.c_str());
-		patterns::CPatternComplex complex;
 
 		delay.maxDelayNumber = 0;
 		tokenPattern.typeOfMatching = patterns::m_full;
 		auto temp_pair = std::make_pair(delay, tokenPattern);
 		tp.addBack(temp_pair);
-
-		complex.DNF.push_back(std::vector<patterns::CTextPattern>().push_back(tp));
 
 		s.testPattern(tp);
 		cin >> recv;

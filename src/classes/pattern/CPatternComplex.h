@@ -11,17 +11,17 @@
 #include <vector>
 #include <iostream>
 #include "CTextPattern.h"
-
+#include "TPatternInterface.h"
 
 namespace patterns
 {
 
-class CPatternComplex
+class CPatternComplex: public TPatternInterface
 {
 public:
 	std::vector<std::vector<CTextPattern> > DNF;
 
-	bool cmp(std::vector<CToken *> &text);
+	virtual uint cmp(std::vector<CToken *> &text);
 
 	CPatternComplex();
 	virtual ~CPatternComplex();

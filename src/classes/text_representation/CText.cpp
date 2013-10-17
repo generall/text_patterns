@@ -110,14 +110,9 @@ CText::~CText()
 	}
 }
 
-int CText::testPatetrn(CTextPattern& pattern)
+int CText::testPatetrn(TPatternInterface& pattern)
 {
-	return pattern.compare(text);
-}
-
-bool CText::testComplex(CPatternComplex& complex)
-{
-	return complex.cmp(text);
+	return pattern.cmp(text);
 }
 
 } /* namespace patterns */
