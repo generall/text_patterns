@@ -52,6 +52,8 @@ void CSamples::summStatistics(std::map<CWord*, int, CWordCompare>& s1,
 
 void CSamples::calcGroupStat()
 {
+	lastStatistic.clear();
+	lastStatisticByWord.clear();
 	for (auto x : samples)
 	{
 		std::map<CWord*, int, CWordCompare> s;
@@ -66,20 +68,24 @@ void CSamples::calcGroupStat()
 		}
 		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
 
-		std::cout << "---------" << x.first << "-------" << std::endl;
-		for (int i = 0; i < 10; i++)
+		lastStatisticByWord[x.first] = s;
+		//std::cout << "---------" << x.first << "-------" << std::endl;
+		/*
+		for (uint i = 0; i < 10; i++)
 		{
 			std::cout << stat_by_friquency[i].first->value << "\t = " << stat_by_friquency[i].second
 					<< std::endl;
 		}
+		*/
 		statistic[x.first] = stat_by_friquency;
 	}
 	lastStatistic = statistic;
 }
 
-void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask)
+void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask, bool accept)
 {
 	lastStatistic.clear();
+	lastStatisticByWord.clear();
 	for (auto x : mask)
 	{
 		if (samples[x.first].size() != x.second.size())
@@ -89,7 +95,7 @@ void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask)
 
 		for (uint i = 0; i < samples[x.first].size(); i++)
 		{
-			if (x.second[i])
+			if (x.second[i] == accept)
 			{
 				summStatistics(s, samples[x.first][i]->statistics);
 
@@ -102,6 +108,7 @@ void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask)
 				lastStatistic[x.first] = stat_by_friquency;
 			}
 		}
+		lastStatisticByWord[x.first] = s;
 	}
 }
 

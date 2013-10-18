@@ -30,6 +30,9 @@ public:
 	std::map<std::string, std::vector<std::pair<CWord *, int> > > statistic;
 
 	std::map<std::string, std::vector<std::pair<CWord *, int> > > lastStatistic;
+	std::map<std::string, std::map<CWord *, int, CWordCompare> >  lastStatisticByWord;
+
+
 	std::map<std::string, std::vector<bool> > lastAcceptedMask;
 	std::map<std::string, std::pair<uint, uint> > lastPatterStatistic;
 
@@ -43,7 +46,7 @@ public:
 			bool renew = false);
 
 	void calcGroupStat();
-	void calcGroupStat(std::map<std::string, std::vector<bool> > &mask);
+	void calcGroupStat(std::map<std::string, std::vector<bool> > &mask, bool accept = true);
 
 	void summStatistics(std::map<CWord*, int, CWordCompare> &s1,
 			const std::map<CWord*, int, CWordCompare> &s2);
