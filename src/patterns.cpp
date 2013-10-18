@@ -16,6 +16,7 @@
 #include "classes/text_representation/CDict.h"
 #include "classes/text_representation/CText.h"
 #include "classes/learning/CSamples.h"
+#include "classes/learning/CComplexGenerator.h"
 
 using namespace std;
 
@@ -87,8 +88,7 @@ bool loadTextTest()
 bool loadSamplesTest()
 {
 	patterns::CSamples s;
-	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false,
-			true);
+	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false, true);
 
 	string recv;
 	cin >> recv;
@@ -131,8 +131,33 @@ bool loadSamplesTest()
 	}
 }
 
+bool learningTest()
+{
+	patterns::CSamples s;
+	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false, true);
+	patterns::CPatternComplex complex;
+	patterns::CComplexGenerator generator;
+	complex = generator.generatePattern("infosecurity", s, 4);
+	cout<<"infosecurity pattern: "<<endl;
+	for(auto x: complex.DNF)
+	{
+		for(auto y: x)
+		{
+			for(auto z: y.pattern)
+			{
+				cout << z.second.value <<endl;
+			}
+		}
+	}
+
+
+	return true;
+}
+
 int main()
 {
+	learningTest();
+
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())
 	{
@@ -144,8 +169,7 @@ int main()
 	}
 
 	std::regex r("ol.*");
-	cout << patterns::levenshtein_distance(string("troll"), string("trall"))
-			<< endl;
+	cout << patterns::levenshtein_distance(string("troll"), string("trall")) << endl;
 	cout << std::regex_match("ololo", r) << endl;
 	cout << std::regex_match("trololo", r) << endl;
 	return 0;

@@ -29,7 +29,7 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 
 	combination.resize(maxlen);
 	maskCache.resize(maxlen);
-	for (int i = 0; i < maxlen; i++)
+	for (uint i = 0; i < maxlen; i++)
 		combination[i] = i;
 	prev_comb = combination;
 	//добавить сюда что-то типо эвристики, например: пропускать несущественные слова
@@ -108,8 +108,8 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 				prev_comb = combination;
 				is_new_combination = nextCombination(combination, max_word_to_consider);
 				//удалить лишнее из кэша маски и из патерна
-				int sameCount = 0;
-				for (int j = 0; j < maxlen; j++)
+				uint sameCount = 0;
+				for (uint j = 0; j < maxlen; j++)
 				{
 					if (prev_comb[j] == combination[j])
 					{

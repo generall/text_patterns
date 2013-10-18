@@ -189,7 +189,7 @@ void CTextPattern::addFront(std::pair<CDelay, CTokenPattern>& p)
 
 void CTextPattern::del()
 {
-	pattern.erase(pattern.end() - 1);
+	pattern.erase(--pattern.end());
 }
 
 CTextPattern::~CTextPattern()
