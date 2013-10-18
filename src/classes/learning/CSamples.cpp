@@ -120,7 +120,7 @@ void CSamples::testPattern(const TPatternInterface& pattern,
 	{
 		int n = 0;
 		int m = 0;
-		lastAcceptedMask[x.first] = std::vector<bool>();
+		//lastAcceptedMask[x.first] = std::vector<bool>();
 
 		auto t = samples[x.first];
 		for (uint i = 0; i < t.size(); i++)
@@ -136,7 +136,7 @@ void CSamples::testPattern(const TPatternInterface& pattern,
 		}
 		if (n == 0)
 		{
-			lastAcceptedMask.erase(x.first);
+			//lastAcceptedMask.erase(x.first);
 		}
 		lastPatterStatistic[x.first] = std::make_pair(n, m);
 		//std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;

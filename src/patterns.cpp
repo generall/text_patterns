@@ -133,23 +133,24 @@ bool loadSamplesTest()
 
 bool learningTest()
 {
+	cout << "loading learning test" << endl;
 	patterns::CSamples s;
 	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false, true);
 	patterns::CPatternComplex complex;
 	patterns::CComplexGenerator generator;
-	complex = generator.generatePattern("infosecurity", s, 4);
-	cout<<"infosecurity pattern: "<<endl;
-	for(auto x: complex.DNF)
+	cout << "data loaded" << endl;
+	complex = generator.generatePattern("infosecurity", s, 3);
+	cout << "infosecurity pattern: " << endl;
+	for (auto x : complex.DNF)
 	{
-		for(auto y: x)
+		for (auto y : x)
 		{
-			for(auto z: y.pattern)
+			for (auto z : y.pattern)
 			{
-				cout << z.second.value <<endl;
+				cout << z.second.value << endl;
 			}
 		}
 	}
-
 
 	return true;
 }

@@ -39,10 +39,23 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 	bool generate_new_combination = false;
 	while (is_new_combination)
 	{
+		std::cout << "current combination:" << std::endl;
+		for (auto d : combination)
+			std::cout << " " << d;
+		std::cout << std::endl;
+
 		for (uint i = already_estimated; i < maxlen; i++)
 		{
+			int temp;
+			std::cout << "-------------------------------" << std::endl;
+			//std::cout << "every position confirm required" << std::endl;
+			//std::cin >> temp;
+
+			std::cout << "now estimating: #" << i << " : "
+					<< globalStat[combination[i]].first->value << std::endl;
 			if (i == 0)
 			{
+
 				currentComplex.DNF.clear(); //очистить текущий комплекс
 				CTextPattern tp;
 				tp.add(globalStat[combination[i]].first->value);
@@ -70,17 +83,38 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 					//для которых маска - false повторный поиск при успехе проставляет true
 					maskCache[i] = samples.lastAcceptedMask; //маску в кэш
 					currentComplex.add(tp); //паттерн в комплекс
-				}else{
+				}
+				else
+				{
+					std::cout << "no word found => skipping" << std::endl;
 					//пфф, генерируем новый
+					//ан нет, не все так просто, надо скипнуть комбинации таким образом,
+					//чтоб на хотя бы одном k-том, где k in [0;i] месте был другой элемент
+					//при этом новых паттернов не добавляется.
+					//вынесем в отдельный обработчик
 					generate_new_combination = true;
 				}
 			}
 
+			for(auto z: currentComplex.DNF)
+			{
+				for(auto zz: z[0].pattern)
+				{
+					std::cout<<zz.second.value<<std::endl;
+				}
+			}
+
+			std::cout << "currentComplex.size() after =" << currentComplex.DNF.size() << std::endl;
+
 			//проверяем покрытие
 			int delta = samples.lastPatterStatistic[classter].first
 					- samples.lastPatterStatistic[classter].second;
-			if (delta == 0)
+
+			std::cout << "delta: " << delta << " " << samples.lastPatterStatistic[classter].first
+					<< " of " << samples.lastPatterStatistic[classter].second << std::endl;
+			if (delta == 0 && !generate_new_combination)
 			{
+				std::cout << "cover is reached" << std::endl;
 				//покрытие достигнуто
 				//сравнить с лучшим, для этого посчитать энтропию
 				std::vector<double> probability_data;
@@ -105,28 +139,47 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 			if (generate_new_combination)
 			{
 				generate_new_combination = false;
-				prev_comb = combination;
-				is_new_combination = nextCombination(combination, max_word_to_consider);
-				//удалить лишнее из кэша маски и из патерна
+				//-------------------------------------
+				bool is_valid = false;
 				uint sameCount = 0;
-				for (uint j = 0; j < maxlen; j++)
+
+				while (!is_valid)
 				{
-					if (prev_comb[j] == combination[j])
+					prev_comb = combination;
+					is_new_combination = nextCombination(combination, max_word_to_consider);
+					if (!is_new_combination) //если больше ничего не сгенерировалось
+						return bestComplex;
+					sameCount = 0;
+					for (uint j = 0; j <= i; j++)
 					{
-						sameCount++;
+						if (prev_comb[j] == combination[j])
+						{
+							sameCount++;
+						}
+						else
+						{
+							break;
+						}
+					}
+					if (sameCount == i + 1)
+					{
+						is_valid = false;
 					}
 					else
 					{
-						break;
+						is_valid = true;
 					}
 				}
+				for (auto d : combination)
+					std::cout << " " << d;
+				std::cout << std::endl;
+				//тут найден валидный
 				while (currentComplex.DNF.size() > sameCount)
 					currentComplex.del();
-				while (maskCache.size() > sameCount)
-					maskCache.erase(maskCache.end() - 1);
 				//идекс уже проверенности апгрейдить.
 				already_estimated = sameCount;
 				break;
+				//-------------------------------------
 			}
 		}
 	}

@@ -21,7 +21,7 @@ namespace patterns
 class CComplexGenerator
 {
 	bool nextCombination(std::vector<int> & a, int n);
-	uint max_word_to_consider = 50;
+	uint max_word_to_consider = 40;
 
 	double entropy(std::vector<double> &data);
 
