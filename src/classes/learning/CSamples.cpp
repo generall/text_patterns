@@ -52,8 +52,10 @@ void CSamples::summStatistics(std::map<CWord*, int, CWordCompare>& s1,
 
 void CSamples::calcGroupStat()
 {
-	lastStatistic.clear();
-	lastStatisticByWord.clear();
+	last_statistic.clear();
+	last_statistic_by_word.clear();
+	global_statistic.clear();
+	global_statistic_by_word.clear();
 	for (auto x : samples)
 	{
 		std::map<CWord*, int, CWordCompare> s;
@@ -68,24 +70,25 @@ void CSamples::calcGroupStat()
 		}
 		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
 
-		lastStatisticByWord[x.first] = s;
-		//std::cout << "---------" << x.first << "-------" << std::endl;
-		/*
-		for (uint i = 0; i < 10; i++)
-		{
-			std::cout << stat_by_friquency[i].first->value << "\t = " << stat_by_friquency[i].second
-					<< std::endl;
-		}
-		*/
+		last_statistic_by_word[x.first] = s;
 		statistic[x.first] = stat_by_friquency;
 	}
-	lastStatistic = statistic;
+	last_statistic = statistic;
+	for (auto x : last_statistic_by_word)
+	{
+		summStatistics(global_statistic_by_word, x.second);
+	}
+	for (auto y : global_statistic_by_word)
+	{
+		global_statistic.push_back(std::make_pair(y.first, y.second));
+	}
+	std::sort(global_statistic.begin(), global_statistic.end(), StatByFriquencyCmp());
 }
 
 void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask, bool accept)
 {
-	lastStatistic.clear();
-	lastStatisticByWord.clear();
+	last_statistic.clear();
+	last_statistic_by_word.clear();
 	for (auto x : mask)
 	{
 		if (samples[x.first].size() != x.second.size())
@@ -105,17 +108,17 @@ void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask, bo
 					stat_by_friquency.push_back(std::make_pair(y.first, y.second));
 				}
 				std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
-				lastStatistic[x.first] = stat_by_friquency;
+				last_statistic[x.first] = stat_by_friquency;
 			}
 		}
-		lastStatisticByWord[x.first] = s;
+		last_statistic_by_word[x.first] = s;
 	}
 }
 
 void CSamples::testPattern(const TPatternInterface& pattern,
 		std::map<std::string, std::vector<bool> >& mask, bool accept, bool renew)
 {
-	lastPatterStatistic.clear();
+	last_patter_statistic.clear();
 	for (auto x : mask)
 	{
 		int n = 0;
@@ -130,7 +133,7 @@ void CSamples::testPattern(const TPatternInterface& pattern,
 			{ // пропускаем те, которые запрещены маской
 				uint test = t[i]->testPatetrn(pattern) > 0 ? 1 : 0;
 				n += test;
-				lastAcceptedMask[x.first][i] = (test > 0 ? renew : !renew); // обновляем маску (дополняем до общего, или отнимаем от общего)
+				last_accepted_mask[x.first][i] = (test > 0 ? renew : !renew); // обновляем маску (дополняем до общего, или отнимаем от общего)
 				m++;
 			}
 		}
@@ -138,37 +141,79 @@ void CSamples::testPattern(const TPatternInterface& pattern,
 		{
 			//lastAcceptedMask.erase(x.first);
 		}
-		lastPatterStatistic[x.first] = std::make_pair(n, m);
+		last_patter_statistic[x.first] = std::make_pair(n, m);
 		//std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
 	}
 }
 
 void CSamples::testPattern(const TPatternInterface& pattern)
 {
-	lastAcceptedMask.clear();
-	lastPatterStatistic.clear();
+	last_accepted_mask.clear();
+	last_patter_statistic.clear();
 	for (auto x : samples)
 	{
 		int n = 0;
 		int m = 0;
-		lastAcceptedMask[x.first] = std::vector<bool>();
+		last_accepted_mask[x.first] = std::vector<bool>();
 
 		for (auto y : x.second)
 		{
 			uint test = y->testPatetrn(pattern) > 0 ? 1 : 0;
 			n += test;
-			lastAcceptedMask[x.first].push_back(test > 0 ? true : false);
+			last_accepted_mask[x.first].push_back(test > 0 ? true : false);
 			m++;
 		}
 		if (n == 0)
 		{
-			lastAcceptedMask.erase(x.first);
+			last_accepted_mask.erase(x.first);
 		}
-		lastPatterStatistic[x.first] = std::make_pair(n, m);
+		last_patter_statistic[x.first] = std::make_pair(n, m);
 		//std::cout << x.first << ": " << n << " of " << x.second.size() << std::endl;
 	}
 }
 
+void CSamples::createMatrix()
+{
+	//генерируем глобальные сигнатуры по словам
+	for (auto wordSign : global_statistic)
+	{
+		signatures.push_back(new CWordSign(wordSign.first));
+	}
+
+	for (auto cluster : samples)
+	{ //для каждого класстера
+
+		auto documents = cluster.second;
+		for (uint i = 0; i < signatures.size(); i++)
+		{
+			for (uint j = 0; j < documents.size(); j++)
+			{
+				auto iter = documents[j]->statistics.find(global_statistic[i].first);
+				if(iter != documents[j]->statistics.end())
+				{
+					signature_matrix_by_sign[cluster.first][i][j] = iter->second;
+					signature_matrix_by_text[cluster.first][j][i] = iter->second;
+				}
+			}
+		}
+	}
+}
+
+
+int CSamples::getSignature(const std::string &cluster, uint text, uint sign)
+{
+	auto matrix = signature_matrix_by_text[cluster];
+	auto i = matrix.find(text);
+	if(i != matrix.end())
+	{
+		auto j = i->second.find(sign);
+		if(j != i->second.end())
+		{
+			return j->second;
+		}
+	}
+	return 0;
+}
 
 CSamples::~CSamples()
 {
@@ -178,6 +223,11 @@ CSamples::~CSamples()
 		{
 			delete y;
 		}
+	}
+	//добавить удаление сигнатур
+	for(auto x: signatures)
+	{
+		delete x;
 	}
 }
 

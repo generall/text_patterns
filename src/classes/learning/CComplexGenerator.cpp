@@ -61,7 +61,7 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 				tp.add(globalStat[combination[i]].first->value);
 				//инициализировать маску первым паттерном
 				samples.testPattern(tp); //все успешно прошедшие тесты инициализируются в маске как true
-				maskCache[i] = samples.lastAcceptedMask; //маску в кэш
+				maskCache[i] = samples.last_accepted_mask; //маску в кэш
 				currentComplex.add(tp); //паттерн в комплекс
 			}
 			else
@@ -72,16 +72,16 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 
 				samples.calcGroupStat(maskCache[i - 1], false); //обновляем статистику по именам
 				//ищем слово в новой стате
-				auto word_pointer = samples.lastStatisticByWord[classter].find(
+				auto word_pointer = samples.last_statistic_by_word[classter].find(
 						globalStat[combination[i]].first);
-				if (word_pointer != samples.lastStatisticByWord[classter].end())
+				if (word_pointer != samples.last_statistic_by_word[classter].end())
 				{
 					//таки найдено!
 					CTextPattern tp;
 					tp.add(word_pointer->first->value);
 					samples.testPattern(tp, maskCache[i - 1], false, true); //для всех паттернов,
 					//для которых маска - false повторный поиск при успехе проставляет true
-					maskCache[i] = samples.lastAcceptedMask; //маску в кэш
+					maskCache[i] = samples.last_accepted_mask; //маску в кэш
 					currentComplex.add(tp); //паттерн в комплекс
 				}
 				else
@@ -107,18 +107,18 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 			std::cout << "currentComplex.size() after =" << currentComplex.DNF.size() << std::endl;
 
 			//проверяем покрытие
-			int delta = samples.lastPatterStatistic[classter].first
-					- samples.lastPatterStatistic[classter].second;
+			int delta = samples.last_patter_statistic[classter].first
+					- samples.last_patter_statistic[classter].second;
 
-			std::cout << "delta: " << delta << " " << samples.lastPatterStatistic[classter].first
-					<< " of " << samples.lastPatterStatistic[classter].second << std::endl;
+			std::cout << "delta: " << delta << " " << samples.last_patter_statistic[classter].first
+					<< " of " << samples.last_patter_statistic[classter].second << std::endl;
 			if (delta == 0 && !generate_new_combination)
 			{
 				std::cout << "cover is reached" << std::endl;
 				//покрытие достигнуто
 				//сравнить с лучшим, для этого посчитать энтропию
 				std::vector<double> probability_data;
-				for (auto x : samples.lastPatterStatistic)
+				for (auto x : samples.last_patter_statistic)
 				{
 					probability_data.push_back((double) x.second.first / (double) x.second.second);
 				}
