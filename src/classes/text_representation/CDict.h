@@ -42,6 +42,7 @@ public:
 
 	CWord nearestLevenshteinWord(CWord &word);
 	void parseMysterm(const std::string &filename);
+	void loadSimple(const std::string &filename);
 	int findWord(CWord &word);
 	void analysis();
 

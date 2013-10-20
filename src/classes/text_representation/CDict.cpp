@@ -139,6 +139,22 @@ void CDict::analysis()
 	}
 }
 
+void CDict::loadSimple(const std::string& filename)
+{
+	std::setlocale(LC_ALL, "en_US.UTF-8");
+	std::fstream in(filename.c_str(), std::ios::in);
+	char line[1024];
+
+	while (!in.eof())
+	{
+		in.getline(line, 1024);
+		std::string first_form(line);
+		CWord w(first_form);
+		w.wordType = w_default;
+		addWord(w);
+	}
+}
+
 CDict::~CDict()
 {
 	for (CWord *w : dictionary)

@@ -24,6 +24,12 @@ namespace patterns
 
 class CSamples
 {
+	double entropy(std::vector<double> &data);
+	bool nextCombination(std::vector<int> & a, int n);
+
+	uint max_word_to_consider = 60;
+
+
 
 public:
 
@@ -50,6 +56,10 @@ public:
 	void createMatrix();
 	int getSignature(const std::string &cluster, uint text, uint sign);
 
+	double testCover(const std::string &cluster, const std::vector<int> &complex);
+
+	std::vector<int> getBestCover(std::vector<std::vector<int> > &covers);
+
 	void testPattern(const TPatternInterface &pattern);
 	void testPattern(const TPatternInterface &pattern,
 			std::map<std::string, std::vector<bool> > &mask, bool accept = false,
@@ -60,6 +70,8 @@ public:
 
 	void summStatistics(std::map<CWord*, int, CWordCompare> &s1,
 			const std::map<CWord*, int, CWordCompare> &s2);
+
+	std::vector<std::vector<int> > generateCovers(const std::string &cluster, uint maxlen);
 
 	CSamples();
 	virtual ~CSamples();

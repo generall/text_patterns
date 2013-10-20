@@ -21,6 +21,7 @@
 #include "CWord.h"
 #include "../pattern/libmathing.h"
 #include "../pattern/TPatternInterface.h"
+#include "CDict.h"
 
 namespace patterns
 {

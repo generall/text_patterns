@@ -18,6 +18,10 @@ CText::CText()
 
 void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 {
+	CDict stop_list;
+	stop_list.loadSimple("/home/generall/Dropbox/code/Ruby/habraloader/fric.txt");
+
+
 	std::setlocale(LC_ALL, "en_US.UTF-8");
 	std::fstream in(filename.c_str(), std::ios::in);
 	char line[1024];
@@ -62,8 +66,12 @@ void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 					w->wordType = w_adjective;
 				if ("V" == type)
 					w->wordType = w_verb;
-
-				text.push_back(w);
+				if(stop_list.findWord(*w) == -1 && first_form.size() > 3)
+				{
+					text.push_back(w);
+				}else{
+					delete w;
+				}
 			}
 		}
 		n++;

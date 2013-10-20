@@ -46,7 +46,6 @@ CPatternComplex CComplexGenerator::generatePattern(const std::string& classter, 
 
 		for (uint i = already_estimated; i < maxlen; i++)
 		{
-			int temp;
 			std::cout << "-------------------------------" << std::endl;
 			//std::cout << "every position confirm required" << std::endl;
 			//std::cin >> temp;

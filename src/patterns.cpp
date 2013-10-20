@@ -139,7 +139,7 @@ bool learningTest()
 	patterns::CPatternComplex complex;
 	patterns::CComplexGenerator generator;
 	cout << "data loaded" << endl;
-	complex = generator.generatePattern("infosecurity", s, 3);
+	complex = generator.generatePattern("gadgets", s, 3);
 	cout << "infosecurity pattern: " << endl;
 	for (auto x : complex.DNF)
 	{
@@ -155,9 +155,30 @@ bool learningTest()
 	return true;
 }
 
+bool learningTest2(const string &group, int hard)
+{
+	cout << "loading learning test №2" << endl;
+	patterns::CSamples s;
+	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false, true);
+	cout << "files loaded" << endl;
+	auto v = s.generateCovers(group, hard);
+	cout << "covers generated!" << endl;
+	auto best_cover = s.getBestCover(v);
+	for (auto x : best_cover)
+	{
+		cout << s.global_statistic[x].first->value << endl;
+	}
+
+	return true;
+}
+
 int main()
 {
-	learningTest();
+	//learningTest2("gadgets",6);
+
+	learningTest2("coding",5);
+
+
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())

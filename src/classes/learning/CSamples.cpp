@@ -174,6 +174,7 @@ void CSamples::testPattern(const TPatternInterface& pattern)
 
 void CSamples::createMatrix()
 {
+	calcGroupStat();
 	//генерируем глобальные сигнатуры по словам
 	for (auto wordSign : global_statistic)
 	{
@@ -189,7 +190,7 @@ void CSamples::createMatrix()
 			for (uint j = 0; j < documents.size(); j++)
 			{
 				auto iter = documents[j]->statistics.find(global_statistic[i].first);
-				if(iter != documents[j]->statistics.end())
+				if (iter != documents[j]->statistics.end())
 				{
 					signature_matrix_by_sign[cluster.first][i][j] = iter->second;
 					signature_matrix_by_text[cluster.first][j][i] = iter->second;
@@ -199,20 +200,291 @@ void CSamples::createMatrix()
 	}
 }
 
-
 int CSamples::getSignature(const std::string &cluster, uint text, uint sign)
 {
 	auto matrix = signature_matrix_by_text[cluster];
 	auto i = matrix.find(text);
-	if(i != matrix.end())
+	if (i != matrix.end())
 	{
 		auto j = i->second.find(sign);
-		if(j != i->second.end())
+		if (j != i->second.end())
 		{
 			return j->second;
 		}
 	}
 	return 0;
+}
+
+double CSamples::entropy(std::vector<double>& data)
+{
+	double sigma = 0;
+	for (auto x : data)
+	{
+		if (x == 0)
+		{ //prevent divizionByZero
+			continue;
+		}
+		else
+		{
+			sigma += x * std::log2(x);
+		}
+	}
+	return -sigma;
+}
+
+bool CSamples::nextCombination(std::vector<int>& a, int n)
+{
+	int k = (int) a.size();
+	for (int i = k - 1; i >= 0; --i)
+		if (a[i] < n - k + i + 1)
+		{
+			++a[i];
+			for (int j = i + 1; j < k; ++j)
+				a[j] = a[j - 1] + 1;
+			return true;
+		}
+	return false;
+}
+
+std::vector<std::vector<int> > CSamples::generateCovers(const std::string &cluster, uint maxlen)
+{
+	createMatrix();
+
+	std::cout << "matrix creating complete" << std::endl;
+
+	uint n_doc = samples[cluster].size();
+	std::vector<int> combination, prev_comb;
+	std::vector<std::vector<int> > result;
+	std::vector<int> largest_cover;
+	uint largest_cover_num = n_doc;
+
+	combination.resize(maxlen);
+	for (uint i = 0; i < maxlen; i++)
+		combination[i] = i;
+	prev_comb = combination;
+
+	std::vector<std::vector<bool> > maskCache;
+	std::vector<std::pair<uint, uint> > statCache;
+	maskCache.resize(maxlen);
+	statCache.resize(maxlen);
+	for (uint i = 0; i < maxlen; i++)
+	{
+		maskCache[i].resize(n_doc, false);
+	}
+
+	uint already_estimated = 0;
+	bool is_new_combination = true;
+	bool generate_new_combination = false;
+
+	while (is_new_combination)
+	{
+		/*
+		 std::cout << "current combination:" << std::endl;
+		 for (auto d : combination)
+		 std::cout << " " << d;
+		 std::cout << std::endl;
+		 */
+		for (uint i = already_estimated; i < maxlen; i++)
+		{
+			//	std::cout << "---------#" << i << "#----------" << std::endl;
+			//	int temp;
+			//	std::cin >> temp;
+			if (i == 0)
+			{
+				std::cout << combination[i] << std::endl;
+
+				for (uint j = 0; j < n_doc; j++)
+					maskCache[i][j] = false;
+				statCache[i].first = 0;
+				statCache[i].second = n_doc;
+				//итерируемся по матрице и получам непустные сигны, записываем их в маску и в стату
+				auto iter = signature_matrix_by_sign[cluster].find(combination[i]);
+				if (iter != signature_matrix_by_sign[cluster].end())
+				{
+					for (auto x : iter->second)
+					{
+						if (!maskCache[i][x.first])
+						{
+							maskCache[i][x.first] = true;
+							statCache[i].first += 1;
+						}
+					}
+				}
+				else
+				{
+					std::cout << "combination[" << i << "] = " << combination[i] << " not found"
+							<< std::endl;
+					generate_new_combination = true;
+				}
+			}
+			else
+			{
+				statCache[i].first = 0;
+				statCache[i].second = statCache[i - 1].second - statCache[i - 1].first;
+				for (uint j = 0; j < n_doc; j++)
+					maskCache[i][j] = maskCache[i - 1][j];
+
+				auto iter = signature_matrix_by_sign[cluster].find(combination[i]);
+				if (iter != signature_matrix_by_sign[cluster].end())
+				{
+					for (auto x : iter->second)
+					{
+						if (!maskCache[i][x.first])
+						{
+							maskCache[i][x.first] = true;
+							statCache[i].first += 1;
+						}
+					}
+				}
+				else
+				{
+					generate_new_combination = true;
+				}
+			}
+			//===================================================================================
+
+			int delta = statCache[i].second - statCache[i].first;
+			if (delta == 0 && !generate_new_combination)
+			{
+				//std::cout << "cover is reached" << std::endl;
+				result.push_back(std::vector<int>(combination.begin(), combination.begin() + i));
+				generate_new_combination = true;
+			}
+			//===================================================================================
+			if (i == maxlen - 1)
+			{
+				if (delta < largest_cover_num)
+				{
+					largest_cover = combination;
+					largest_cover_num = delta;
+				}
+				generate_new_combination = true;
+			}
+
+			if (generate_new_combination)
+			{
+				generate_new_combination = false;
+				//-------------------------------------
+				bool is_valid = false;
+				uint sameCount = 0;
+				//прокручиваем лишние комбинации
+				while (!is_valid)
+				{
+					prev_comb = combination;
+					is_new_combination = nextCombination(combination, max_word_to_consider);
+					if (!is_new_combination)
+					{
+						if (result.size() == 0)
+							result.push_back(largest_cover);
+						return result;
+					}
+					sameCount = 0;
+					for (uint j = 0; j <= i; j++)
+					{
+						if (prev_comb[j] == combination[j])
+						{
+							sameCount++;
+						}
+						else
+						{
+							break;
+						}
+					}
+					if (sameCount == i + 1)
+					{
+						is_valid = false;
+					}
+					else
+					{
+						is_valid = true;
+					}
+				}
+				/*
+				 for (auto d : combination)
+				 std::cout << " " << d;
+				 std::cout << std::endl;
+				 */
+				already_estimated = sameCount;
+				break;
+				//-------------------------------------
+			}
+		}
+	}
+	if (result.size() == 0)
+		result.push_back(largest_cover);
+	return result;
+}
+
+double CSamples::testCover(const std::string& cluster, const std::vector<int>& complex)
+{
+	std::vector<bool> mask;
+	mask.resize(samples[cluster].size(), false);
+	uint total_count = 0;
+	for (auto x : samples)
+		total_count += x.second.size();
+
+	int n = 0;
+	for (auto x : complex)
+	{
+		auto iter = signature_matrix_by_sign[cluster].find(x);
+		if (iter != signature_matrix_by_sign[cluster].end())
+		{
+			for (auto y : iter->second)
+			{
+				if (!mask[y.first])
+				{
+					mask[y.first] = true;
+					n += 1;
+				}
+			}
+		}
+	}
+	return (double) n / (double) total_count;
+}
+
+std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
+{
+	double best_entropy = 10005000;
+	uint best_complex = 0;
+	int i = 0;
+	for (auto c : covers)
+	{
+		std::vector<double> prob;
+		for (auto x : samples)
+		{
+			prob.push_back(testCover(x.first, c));
+			/*
+			 std::cout<<"vector: ";
+			 for (auto z : c)
+			 std::cout << z << " ";
+			 std::cout << std::endl;
+			 std::cout << "probability #" << x.first << " = " << prob[prob.size() - 1] << std::endl;
+			 */
+		}
+		double current_entropy = entropy(prob);
+		//std::cout << "Entropy #" << i <<current_entropy <<std::endl;
+		//std::cout << "---------------------------------" <<std::endl;
+		if (current_entropy < best_entropy)
+		{
+			best_entropy = current_entropy;
+			best_complex = i;
+		}
+		i++;
+	}
+	std::vector<double> prob;
+	for (auto x : samples)
+	{
+		prob.push_back(testCover(x.first, covers[best_complex]));
+		std::cout << "vector: ";
+		for (auto z : covers[best_complex])
+			std::cout << z << " ";
+		std::cout << std::endl;
+		std::cout << "probability #" << x.first << " = " << prob[prob.size() - 1] << std::endl;
+	}
+
+	double current_entropy = entropy(prob);
+	std::cout << "Entropy #" << i << current_entropy << std::endl;
+	return covers[best_complex];
 }
 
 CSamples::~CSamples()
@@ -224,8 +496,8 @@ CSamples::~CSamples()
 			delete y;
 		}
 	}
-	//добавить удаление сигнатур
-	for(auto x: signatures)
+//добавить удаление сигнатур
+	for (auto x : signatures)
 	{
 		delete x;
 	}
