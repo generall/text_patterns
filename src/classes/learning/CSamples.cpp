@@ -16,7 +16,7 @@ CSamples::CSamples()
 
 }
 
-void CSamples::loadFromFiles(std::string dir, bool has_puncluation, bool calcStatistics)
+void CSamples::loadFromFiles(std::string dir,std::string stoplist, bool has_puncluation, bool calcStatistics)
 {
 
 	//загрузить список из flist.txt
@@ -31,7 +31,10 @@ void CSamples::loadFromFiles(std::string dir, bool has_puncluation, bool calcSta
 			std::getline(flist, filename, ' ');
 			std::getline(flist, classter);
 			CText *t = new CText();
-			t->loadFromMytsem(dir + "/" + filename, has_puncluation);
+
+			t->stoplist = stoplist;
+
+			t->loadFromMytsem(dir, filename, has_puncluation);
 			if (calcStatistics)
 				t->performStatistics();
 			samples[classter].push_back(t);

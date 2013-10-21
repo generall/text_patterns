@@ -31,13 +31,13 @@ class CText
 
 	std::vector<CToken*> text;
 
-
 public:
 
 	std::map<CWord*, int, CWordCompare> statistics;
 	std::vector<std::pair<CWord *, int>> stat_by_friquency;
+	std::string stoplist;
 
-	void loadFromMytsem(std::string filename, bool has_punctuation = true);
+	void loadFromMytsem(const std::string &dir, const std::string &filename, bool has_punctuation = true);
 	void performStatistics();
 	int testPatetrn(const TPatternInterface &pattern);
 

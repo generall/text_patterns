@@ -16,14 +16,16 @@ CText::CText()
 
 }
 
-void CText::loadFromMytsem(std::string filename, bool has_punctuation)
+void CText::loadFromMytsem(const std::string &dir, const std::string &filename,
+		bool has_punctuation)
 {
-	CDict stop_list;
-	stop_list.loadSimple("/home/generall/Dropbox/code/Ruby/habraloader/fric.txt");
 
+	CDict stop_list;
+	if (stoplist.size() > 0)
+		stop_list.loadSimple(dir + "/" + stoplist);
 
 	std::setlocale(LC_ALL, "en_US.UTF-8");
-	std::fstream in(filename.c_str(), std::ios::in);
+	std::fstream in((dir + "/" + filename).c_str(), std::ios::in);
 	char line[1024];
 	int n = 0;
 	while (!in.eof())
@@ -66,10 +68,12 @@ void CText::loadFromMytsem(std::string filename, bool has_punctuation)
 					w->wordType = w_adjective;
 				if ("V" == type)
 					w->wordType = w_verb;
-				if(stop_list.findWord(*w) == -1 && first_form.size() > 3)
+				if (stop_list.findWord(*w) == -1 && first_form.size() > 3)
 				{
 					text.push_back(w);
-				}else{
+				}
+				else
+				{
 					delete w;
 				}
 			}
@@ -100,16 +104,15 @@ void CText::performStatistics()
 	{
 		stat_by_friquency.push_back(std::make_pair(x.first, x.second));
 	}
-	std::sort(stat_by_friquency.begin(), stat_by_friquency.end(),
-			StatByFriquencyCmp());
+	std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
 
 	/*
-	for (int i = 0; i < 10; i++)
-	{
-		std::cout << stat_by_friquency[i].first->value << "\t = "
-				<< stat_by_friquency[i].second << std::endl;
-	}
-	*/
+	 for (int i = 0; i < 10; i++)
+	 {
+	 std::cout << stat_by_friquency[i].first->value << "\t = "
+	 << stat_by_friquency[i].second << std::endl;
+	 }
+	 */
 }
 
 CText::~CText()
@@ -126,5 +129,4 @@ int CText::testPatetrn(const TPatternInterface& pattern)
 }
 
 } /* namespace patterns */
-
 

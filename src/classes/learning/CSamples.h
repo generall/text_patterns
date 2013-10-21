@@ -27,9 +27,7 @@ class CSamples
 	double entropy(std::vector<double> &data);
 	bool nextCombination(std::vector<int> & a, int n);
 
-	uint max_word_to_consider = 60;
-
-
+	uint max_word_to_consider = 45;
 
 public:
 
@@ -52,7 +50,9 @@ public:
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_text;
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_sign;
 
-	void loadFromFiles(std::string dir, bool has_puncluation = false, bool calcStatistics = false);
+	void loadFromFiles(std::string dir, std::string stoplist, bool has_puncluation = false,
+			bool calcStatistics = false);
+
 	void createMatrix();
 	int getSignature(const std::string &cluster, uint text, uint sign);
 

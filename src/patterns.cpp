@@ -16,7 +16,7 @@
 #include "classes/text_representation/CDict.h"
 #include "classes/text_representation/CText.h"
 #include "classes/learning/CSamples.h"
-#include "classes/learning/CComplexGenerator.h"
+#include "classes/conffiles.h"
 
 using namespace std;
 
@@ -80,7 +80,7 @@ bool loadDictTest()
 bool loadTextTest()
 {
 	patterns::CText asimov;
-	asimov.loadFromMytsem("/home/generall/asimov_decoded.txt");
+	asimov.loadFromMytsem("/home/generall/", "asimov_decoded.txt");
 	asimov.performStatistics();
 	return true;
 }
@@ -88,7 +88,7 @@ bool loadTextTest()
 bool loadSamplesTest()
 {
 	patterns::CSamples s;
-	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false, true);
+	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
 
 	string recv;
 	cin >> recv;
@@ -131,35 +131,11 @@ bool loadSamplesTest()
 	}
 }
 
-bool learningTest()
-{
-	cout << "loading learning test" << endl;
-	patterns::CSamples s;
-	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false, true);
-	patterns::CPatternComplex complex;
-	patterns::CComplexGenerator generator;
-	cout << "data loaded" << endl;
-	complex = generator.generatePattern("gadgets", s, 3);
-	cout << "infosecurity pattern: " << endl;
-	for (auto x : complex.DNF)
-	{
-		for (auto y : x)
-		{
-			for (auto z : y.pattern)
-			{
-				cout << z.second.value << endl;
-			}
-		}
-	}
-
-	return true;
-}
-
 bool learningTest2(const string &group, int hard)
 {
 	cout << "loading learning test №2" << endl;
 	patterns::CSamples s;
-	s.loadFromFiles("/home/generall/Dropbox/code/Ruby/habraloader", false, true);
+	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
 	cout << "files loaded" << endl;
 	auto v = s.generateCovers(group, hard);
 	cout << "covers generated!" << endl;
@@ -176,9 +152,7 @@ int main()
 {
 	//learningTest2("gadgets",6);
 
-	learningTest2("coding",5);
-
-
+	learningTest2("coding", 5);
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())
