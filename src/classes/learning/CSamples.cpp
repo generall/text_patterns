@@ -32,10 +32,10 @@ void CSamples::loadFromFiles(std::string dir, std::string stoplist, bool has_pun
 			std::getline(flist, filename, ' ');
 			std::getline(flist, classter);
 			CText *t = new CText();
-
 			t->stoplist = stoplist;
 
 			t->loadFromMytsem(dir, filename, has_puncluation);
+
 			if (calcStatistics)
 				t->performStatistics();
 			samples[classter].push_back(t);
@@ -247,11 +247,11 @@ void CSamples::createSortedMatrix()
 		for (auto text : cluster.second)
 		{
 			std::vector<uint> temp;
-			for(auto sign: text.second)
+			for (auto sign : text.second)
 			{
 				temp.push_back(sign.first);
 			}
-			std::sort(temp.begin(),temp.end()); // best case expected
+			std::sort(temp.begin(), temp.end()); // best case expected
 			group_signature_matrix_by_text_sorted[cluster.first][text.first] = temp;
 		}
 	}
@@ -259,21 +259,18 @@ void CSamples::createSortedMatrix()
 
 void CSamples::createFPTree()
 {
-	for(auto cluster: group_signature_matrix_by_text_sorted)
+	for (auto cluster : group_signature_matrix_by_text_sorted)
 	{
-		for(auto text: cluster.second)
+		for (auto text : cluster.second)
 		{
-			for(uint sign: text.second)
+			for (uint sign : text.second)
 			{
-				FPtree[cluster.first].FPAdd(sign );
+				FPtree[cluster.first].FPAdd(sign);
 			}
 			FPtree[cluster.first].switchToRoot();
 		}
 	}
 }
-
-
-
 
 int CSamples::getSignature(const std::string &cluster, uint text, uint sign)
 {
@@ -562,11 +559,37 @@ std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 	return covers[best_complex];
 }
 
-void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint>& phi,
+void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 		std::vector<std::vector<uint> > &R)
 {
+	if(tree.pointers.size() == 0)
+		return;
 	auto i = --tree.pointers.end();
+	while (i != tree.pointers.begin())
+	{
+		if (i->second.second >= delta_min)
+		{
 
+			//====DEBUG=====
+			std::cout << "create new tree with " << statistic["algo"][i->second.second].first->value
+					<< std::endl;
+
+			//++++DEBUG+++++
+
+			phi.push_back(i->first);
+			R.push_back(phi);
+			FPTree<uint> CFPTree(tree, i->first); //строим условное дерево
+			FPFind(CFPTree, delta_min, phi, R);
+		}
+		--i;
+	}
+}
+
+std::vector<std::vector<uint> > CSamples::FPGrowth(const std::string& cluster, int delta_min)
+{
+	std::vector<std::vector<uint> > res;
+	FPFind(FPtree[cluster], delta_min, std::vector<uint>(), res);
+	return res;
 }
 
 CSamples::~CSamples()
@@ -594,5 +617,4 @@ CSamples::~CSamples()
 }
 
 } /* namespace patterns */
-
 

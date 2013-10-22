@@ -24,7 +24,7 @@ void CText::loadFromMytsem(const std::string &dir, const std::string &filename,
 	if (stoplist.size() > 0)
 		stop_list.loadSimple(dir + "/" + stoplist);
 
-	std::setlocale(LC_ALL, "en_US.UTF-8");
+	std::setlocale(LC_ALL, "ru_RU.UTF-8");
 	std::fstream in((dir + "/" + filename).c_str(), std::ios::in);
 	char line[1024];
 	int n = 0;
@@ -68,7 +68,7 @@ void CText::loadFromMytsem(const std::string &dir, const std::string &filename,
 					w->wordType = w_adjective;
 				if ("V" == type)
 					w->wordType = w_verb;
-				if (stop_list.findWord(*w) == -1 && first_form.size() > 3)
+				if (stop_list.findWord(first_form) == -1 && first_form.size() >= 3)
 				{
 					text.push_back(w);
 				}

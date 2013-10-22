@@ -66,8 +66,10 @@ public:
 	void createSortedMatrix();
 	void createFPTree();
 
-	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> &phi,
+	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> phi,
 			std::vector<std::vector<uint> > &R);
+
+	std::vector<std::vector<uint> > FPGrowth(const std::string &cluster, int delta_min);
 
 	int getSignature(const std::string &cluster, uint text, uint sign);
 

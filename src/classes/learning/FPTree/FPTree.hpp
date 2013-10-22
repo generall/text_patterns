@@ -9,6 +9,7 @@
 #define FPTREE_HPP_
 
 #include "FPNode.hpp"
+#include <iostream>
 
 namespace patterns
 {
@@ -27,15 +28,17 @@ public:
 		current = root;
 	}
 
-
 	void rDelete0(FPNode<T> * node)
 	{
-		for(auto x : node->offspring)
+		for (auto x : node->offspring)
 		{
-			if(x.second->count == 0)
+			if (x.second->count == 0)
 			{
-				rDelete(x.second);
+				rDelete0(x.second);
 				delete x.second;
+
+				//WARNING! SEGFAULT EXPECTED
+				node->offspring.erase(x.first);
 			}
 		}
 	}
@@ -43,7 +46,7 @@ public:
 	void rebuidPointers(FPNode<T> * node)
 	{
 		pointers.clear();
-		for(auto x : node->offspring)
+		for (auto x : node->offspring)
 		{
 			pointers[x.first].second += x.second->count;
 			pointers[x.first].first.push_back(x.second);
@@ -57,16 +60,16 @@ public:
 			FPNode<T> *new_node = new FPNode<T>(x.first, to);
 			to->offspring[x.first] = new_node;
 			new_node->count = x.second->count;
-			pointers[x.firts].first.push_back(new_node);
+			pointers[x.first].first.push_back(new_node);
 			copy1(x.second, new_node);
 		}
 	}
 
-	void dropCount(FPNode<T> * node,T v)
+	void dropCount(FPNode<T> * node, T v)
 	{
-		for(auto x: node->offspring)
+		for (auto x : node->offspring)
 		{
-			if(x.first != v)
+			if (x.first != v)
 			{
 				x.second->count = 0;
 			}
@@ -86,8 +89,15 @@ public:
 		else
 		{
 			t = new FPNode<T>(v, current);
-			pointers[v] = std::make_pair(std::vector<FPNode<T>*>(), 1);
-			pointers[v].first.push_back(t);
+			if(pointers.find(v) == pointers.end())
+			{
+				pointers[v] = std::make_pair(std::vector<FPNode<T>*>(), 1);
+				pointers[v].first.push_back(t);
+			}else{
+				pointers[v].second += 1;
+				pointers[v].first.push_back(t);
+			}
+			current->offspring[v] = t;
 			current = t;
 		}
 	}
@@ -96,27 +106,38 @@ public:
 		current = root;
 	}
 
-
 	FPTree(FPTree &t, T v)
 	{
 		root = new FPNode<T>(0, NULL);
 		current = root;
 		copy1(t.root, root);
 		dropCount(root, v);
-		for(auto x: pointers[v])
+		for (auto x : pointers[v].first)
 		{
-			FPNode<T> *temp = x.first;
-			while(temp->parent != NULL)
+			FPNode<T> *temp = x;
+			while (temp->parent != NULL)
 			{
 				temp->parent->count += temp->count;
 				temp = temp->parent;
 			}
-			x.first->count = 0;
+			x->count = 0;
 		}
 		rDelete0(root);
 		rebuidPointers(root);
 	}
 
+	void print(FPNode<T> * node, int n)
+	{
+		if (n < 15)
+		{
+			for (auto x : node->offspring)
+			{
+				std::cout << std::string(n, '-') << " ";
+				std::cout << x.first<< " : "<<x.second->count<<" :: "<<pointers[x.first].second << std::endl;
+				print(x.second, n + 1);
+			}
+		}
+	}
 
 	virtual ~FPTree()
 	{

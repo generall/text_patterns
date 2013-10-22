@@ -61,22 +61,6 @@ bool textPatternsTest()
 	return false;
 }
 
-bool loadDictTest()
-{
-
-	patterns::CDict d;
-	d.parseMysterm("/home/generall/ydict_test.txt");
-	patterns::CWord w1("тиран");
-	patterns::CWord w2("ololo");
-	patterns::CWord w3("тиротрон");
-
-	std::cout << d.nearestLevenshteinWord(w3).value << std::endl;
-
-	//d.analysis(); pointless
-
-	return d.findWord(w1) != -1 && d.findWord(w2) == -1;
-}
-
 bool loadTextTest()
 {
 	patterns::CText asimov;
@@ -157,20 +141,77 @@ bool FPTreeTest()
 	s.createGroupMatrix();
 	cout << "matrix generateg" << endl;
 	s.createSortedMatrix();
-	cout << "Sorted matrix generated" <<endl;
+	cout << "Sorted matrix generated" << endl;
 	s.createFPTree();
-	cout << "FPTree matrix generated" <<endl;
+	cout << "FPTree matrix generated" << endl;
+
+	s.FPtree["algo"].print(s.FPtree["algo"].root, 0);
+	std::cout << s.FPtree["algo"].pointers.size() << " <-- tree uniq word size" << std::endl;
+
+	/*
+	for (auto x : s.group_signature_matrix_by_text_sorted["algo"])
+	{
+
+		std::cout << "-------------" << x.first << "--------------" << std::endl;
+		for (auto y : x.second)
+		{
+			std::cout << y<<"# " << s.statistic["algo"][y].first->value << std::endl;
+		}
+	}
+	*/
+
+	/*
+	 for(auto x: s.statistic["algo"])
+	 {
+	 std::cout << x.first->value << " : " << x.second <<std::endl;
+	 }
+	 */
+
+
+	/*
+	 auto R = s.FPGrowth("algo", 3);
+
+	 for (auto x : R)
+	 {
+	 for (auto y : x)
+	 {
+	 cout << y << " ";
+	 }
+	 cout << endl;
+	 }
+	*/
 
 	return true;
 }
 
 int main()
 {
-	//learningTest2("gadgets",6);
+//learningTest2("gadgets",6);
 
-	//learningTest2("DIY", 5);
-	FPTreeTest();
+//learningTest2("DIY", 5);
 
+	patterns::FPTree<int> tt;
+
+	tt.FPAdd(1);
+	tt.FPAdd(2);
+	tt.FPAdd(3);
+	tt.FPAdd(4);
+	tt.switchToRoot();
+	tt.FPAdd(1);
+	tt.FPAdd(3);
+	tt.FPAdd(4);
+	tt.switchToRoot();
+	tt.FPAdd(1);
+	tt.FPAdd(2);
+	tt.FPAdd(4);
+
+
+	tt.print(tt.root,0);
+	patterns::FPTree<int> tt2(tt, 4);
+	tt2.print(tt2.root,0);
+
+
+	//FPTreeTest();
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())

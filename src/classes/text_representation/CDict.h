@@ -27,24 +27,15 @@ namespace patterns
 class CDict
 {
 
-	std::set<CWord*, CWordCompare> dictionary;
-	std::vector<CWord*> dictionary_by_alpha;
-	std::vector<CWord*> dictionary_by_length;
-	bool reorganised = false;
+	std::set<std::string> dictionary;
 
-	void reorganiseToWork();
-	int getMaxLevenshteinDist(std::string val);
 
 public:
 
 
-	void addWord(CWord &word);
-
-	CWord nearestLevenshteinWord(CWord &word);
-	void parseMysterm(const std::string &filename);
+	void addWord(const std::string &word);
 	void loadSimple(const std::string &filename);
-	int findWord(CWord &word);
-	void analysis();
+	int findWord(const std::string &word);
 
 
 	CDict();
