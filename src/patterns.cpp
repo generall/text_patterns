@@ -152,7 +152,7 @@ int main()
 {
 	//learningTest2("gadgets",6);
 
-	learningTest2("coding", 5);
+	learningTest2("DIY", 5);
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())
