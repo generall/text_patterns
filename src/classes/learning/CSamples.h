@@ -18,6 +18,7 @@
 #include "../pattern/TPatternInterface.h"
 #include "TSignature.h"
 #include "CWordSign.h"
+#include "FPTree/FPTree.hpp"
 
 namespace patterns
 {
@@ -46,14 +47,28 @@ public:
 
 	//глобальный массив признаков.
 	std::vector<TSignature *> signatures;
-	//глобальная матрица Текст-признак по класстерам, наверно
+	//глобальная матрица Текст-признак по класстерам
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_text;
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_sign;
+
+	std::map<std::string, std::vector<TSignature *> > group_signatures;
+	std::map<std::string, std::map<uint, std::map<uint, int> > > group_signature_matrix_by_text;
+	std::map<std::string, std::map<uint, std::map<uint, int> > > group_signature_matrix_by_sign;
+	std::map<std::string, std::map<uint, std::vector<uint> > > group_signature_matrix_by_text_sorted;
+
+	std::map<std::string, FPTree<uint> > FPtree;
 
 	void loadFromFiles(std::string dir, std::string stoplist, bool has_puncluation = false,
 			bool calcStatistics = false);
 
 	void createMatrix();
+	void createGroupMatrix();
+	void createSortedMatrix();
+	void createFPTree();
+
+	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> &phi,
+			std::vector<std::vector<uint> > &R);
+
 	int getSignature(const std::string &cluster, uint text, uint sign);
 
 	double testCover(const std::string &cluster, const std::vector<int> &complex);

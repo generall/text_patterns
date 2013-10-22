@@ -148,11 +148,29 @@ bool learningTest2(const string &group, int hard)
 	return true;
 }
 
+bool FPTreeTest()
+{
+	cout << "loading FPTreeTest" << endl;
+	patterns::CSamples s;
+	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
+	cout << "files loaded" << endl;
+	s.createGroupMatrix();
+	cout << "matrix generateg" << endl;
+	s.createSortedMatrix();
+	cout << "Sorted matrix generated" <<endl;
+	s.createFPTree();
+	cout << "FPTree matrix generated" <<endl;
+
+	return true;
+}
+
 int main()
 {
 	//learningTest2("gadgets",6);
 
-	learningTest2("DIY", 5);
+	//learningTest2("DIY", 5);
+	FPTreeTest();
+
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())

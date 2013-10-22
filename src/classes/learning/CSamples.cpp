@@ -16,7 +16,8 @@ CSamples::CSamples()
 
 }
 
-void CSamples::loadFromFiles(std::string dir,std::string stoplist, bool has_puncluation, bool calcStatistics)
+void CSamples::loadFromFiles(std::string dir, std::string stoplist, bool has_puncluation,
+		bool calcStatistics)
 {
 
 	//загрузить список из flist.txt
@@ -55,8 +56,7 @@ void CSamples::summStatistics(std::map<CWord*, int, CWordCompare>& s1,
 
 void CSamples::calcGroupStat()
 {
-	last_statistic.clear();
-	last_statistic_by_word.clear();
+
 	global_statistic.clear();
 	global_statistic_by_word.clear();
 	for (auto x : samples)
@@ -73,10 +73,8 @@ void CSamples::calcGroupStat()
 		}
 		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
 
-		last_statistic_by_word[x.first] = s;
 		statistic[x.first] = stat_by_friquency;
 	}
-	last_statistic = statistic;
 	for (auto x : last_statistic_by_word)
 	{
 		summStatistics(global_statistic_by_word, x.second);
@@ -177,23 +175,27 @@ void CSamples::testPattern(const TPatternInterface& pattern)
 
 void CSamples::createMatrix()
 {
-	calcGroupStat();
-	//генерируем глобальные сигнатуры по словам
-	for (auto wordSign : global_statistic)
+	//получаем глобальную статистику
+	if (statistic.size() == 0)
 	{
-		signatures.push_back(new CWordSign(wordSign.first));
+		calcGroupStat();
+	}
+	//генерируем глобальные сигнатуры по словам
+	for (auto word_sign : global_statistic)
+	{
+		signatures.push_back(new CWordSign(word_sign.first));
 	}
 
 	for (auto cluster : samples)
 	{ //для каждого класстера
 
-		auto documents = cluster.second;
+		auto documents = &cluster.second;
 		for (uint i = 0; i < signatures.size(); i++)
 		{
-			for (uint j = 0; j < documents.size(); j++)
+			for (uint j = 0; j < documents->size(); j++)
 			{
-				auto iter = documents[j]->statistics.find(global_statistic[i].first);
-				if (iter != documents[j]->statistics.end())
+				auto iter = (*documents)[j]->statistics.find(global_statistic[i].first);
+				if (iter != (*documents)[j]->statistics.end())
 				{
 					signature_matrix_by_sign[cluster.first][i][j] = iter->second;
 					signature_matrix_by_text[cluster.first][j][i] = iter->second;
@@ -202,6 +204,76 @@ void CSamples::createMatrix()
 		}
 	}
 }
+
+void CSamples::createGroupMatrix()
+{
+	if (statistic.size() == 0)
+	{
+		calcGroupStat();
+	}
+	for (auto cluster : statistic)
+	{
+		for (auto word_sign : cluster.second)
+		{
+			group_signatures[cluster.first].push_back(new CWordSign(word_sign.first));
+		}
+	}
+
+	for (auto cluster : samples)
+	{ //для каждого класстера
+
+		auto documents = &cluster.second;
+
+		for (uint i = 0; i < group_signatures[cluster.first].size(); i++)
+		{
+			for (uint j = 0; j < documents->size(); j++)
+			{
+
+				auto iter = (*documents)[j]->statistics.find(statistic[cluster.first][i].first);
+				if (iter != (*documents)[j]->statistics.end())
+				{
+					group_signature_matrix_by_sign[cluster.first][i][j] = iter->second;
+					group_signature_matrix_by_text[cluster.first][j][i] = iter->second;
+				}
+			}
+		}
+	}
+}
+
+void CSamples::createSortedMatrix()
+{
+	for (auto cluster : group_signature_matrix_by_text)
+	{
+		for (auto text : cluster.second)
+		{
+			std::vector<uint> temp;
+			for(auto sign: text.second)
+			{
+				temp.push_back(sign.first);
+			}
+			std::sort(temp.begin(),temp.end()); // best case expected
+			group_signature_matrix_by_text_sorted[cluster.first][text.first] = temp;
+		}
+	}
+}
+
+void CSamples::createFPTree()
+{
+	for(auto cluster: group_signature_matrix_by_text_sorted)
+	{
+		for(auto text: cluster.second)
+		{
+			for(uint sign: text.second)
+			{
+				FPtree[cluster.first].FPAdd(sign );
+			}
+			FPtree[cluster.first].switchToRoot();
+		}
+	}
+}
+
+
+
 
 int CSamples::getSignature(const std::string &cluster, uint text, uint sign)
 {
@@ -346,7 +418,7 @@ std::vector<std::vector<int> > CSamples::generateCovers(const std::string &clust
 			}
 			//===================================================================================
 
-			int delta = statCache[i].second - statCache[i].first;
+			uint delta = statCache[i].second - statCache[i].first;
 			if (delta == 0 && !generate_new_combination)
 			{
 				//std::cout << "cover is reached" << std::endl;
@@ -490,6 +562,13 @@ std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 	return covers[best_complex];
 }
 
+void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint>& phi,
+		std::vector<std::vector<uint> > &R)
+{
+	auto i = --tree.pointers.end();
+
+}
+
 CSamples::~CSamples()
 {
 	for (auto x : samples)
@@ -504,7 +583,16 @@ CSamples::~CSamples()
 	{
 		delete x;
 	}
+//удаление груповых сигнатур
+	for (auto x : group_signatures)
+	{
+		for (auto y : x.second)
+		{
+			delete y;
+		}
+	}
 }
 
 } /* namespace patterns */
+
 
