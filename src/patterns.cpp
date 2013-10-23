@@ -168,8 +168,8 @@ bool FPTreeTest()
 	 */
 
 
-	/*
-	 auto R = s.FPGrowth("algo", 3);
+
+	 auto R = s.FPGrowth("algo", 6);
 
 	 for (auto x : R)
 	 {
@@ -179,7 +179,7 @@ bool FPTreeTest()
 	 }
 	 cout << endl;
 	 }
-	*/
+
 
 	return true;
 }
@@ -190,6 +190,8 @@ int main()
 
 //learningTest2("DIY", 5);
 
+
+	/*
 	patterns::FPTree<int> tt;
 
 	tt.FPAdd(1);
@@ -207,11 +209,11 @@ int main()
 
 
 	tt.print(tt.root,0);
-	patterns::FPTree<int> tt2(tt, 4);
+	patterns::FPTree<int> tt2(tt, 3);
 	tt2.print(tt2.root,0);
+	*/
 
-
-	//FPTreeTest();
+	FPTreeTest();
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())

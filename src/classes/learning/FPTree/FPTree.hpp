@@ -36,16 +36,17 @@ public:
 			{
 				rDelete0(x.second);
 				delete x.second;
-
 				//WARNING! SEGFAULT EXPECTED
 				node->offspring.erase(x.first);
+			}else{
+				rDelete0(x.second);
 			}
 		}
 	}
 
 	void rebuidPointers(FPNode<T> * node)
 	{
-		pointers.clear();
+
 		for (auto x : node->offspring)
 		{
 			pointers[x.first].second += x.second->count;
@@ -112,6 +113,7 @@ public:
 		current = root;
 		copy1(t.root, root);
 		dropCount(root, v);
+
 		for (auto x : pointers[v].first)
 		{
 			FPNode<T> *temp = x;
@@ -122,7 +124,9 @@ public:
 			}
 			x->count = 0;
 		}
+
 		rDelete0(root);
+		pointers.clear();
 		rebuidPointers(root);
 	}
 

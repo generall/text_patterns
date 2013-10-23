@@ -562,7 +562,7 @@ std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 		std::vector<std::vector<uint> > &R)
 {
-	if(tree.pointers.size() == 0)
+	if (tree.pointers.size() == 0)
 		return;
 	auto i = --tree.pointers.end();
 	while (i != tree.pointers.begin())
@@ -571,15 +571,16 @@ void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 		{
 
 			//====DEBUG=====
-			std::cout << "create new tree with " << statistic["algo"][i->second.second].first->value
-					<< std::endl;
+			std::cout << std::string(phi.size(), '>') << "create new tree with "
+					<< statistic["algo"][i->first].first->value << "# " << i->first << std::endl;
 
 			//++++DEBUG+++++
 
-			phi.push_back(i->first);
-			R.push_back(phi);
+			std::vector<uint> phi_n = phi;
+			phi_n.push_back(i->first);
+			R.push_back(phi_n);
 			FPTree<uint> CFPTree(tree, i->first); //строим условное дерево
-			FPFind(CFPTree, delta_min, phi, R);
+			FPFind(CFPTree, delta_min, phi_n, R);
 		}
 		--i;
 	}
