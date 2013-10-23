@@ -186,7 +186,8 @@ bool FPTreeTest()
 
 int main()
 {
-//learningTest2("gadgets",6);
+
+	learningTest2("algo",4);
 
 //learningTest2("DIY", 5);
 
@@ -213,7 +214,7 @@ int main()
 	tt2.print(tt2.root,0);
 	*/
 
-	FPTreeTest();
+//	FPTreeTest();
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())

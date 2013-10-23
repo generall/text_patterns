@@ -14,7 +14,7 @@
 namespace patterns
 {
 
-std::string root = "/home/generall/Dropbox/bmstu/5semestr/course/test_samples";
+std::string root = "/home/generall/Dropbox/code/Ruby/habraloader";
 std::string stoplist = "fric.txt";
 
 }

@@ -56,9 +56,12 @@ void CSamples::summStatistics(std::map<CWord*, int, CWordCompare>& s1,
 
 void CSamples::calcGroupStat()
 {
+	if (debud)
+		std::cout << "calcGroupStat" << std::endl;
 
 	global_statistic.clear();
 	global_statistic_by_word.clear();
+	statistic.clear();
 	for (auto x : samples)
 	{
 		std::map<CWord*, int, CWordCompare> s;
