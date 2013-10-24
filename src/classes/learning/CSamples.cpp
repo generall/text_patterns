@@ -56,7 +56,7 @@ void CSamples::summStatistics(std::map<CWord*, int, CWordCompare>& s1,
 
 void CSamples::calcGroupStat()
 {
-	if (debud)
+	if (debug)
 		std::cout << "calcGroupStat" << std::endl;
 
 	global_statistic.clear();
@@ -77,16 +77,17 @@ void CSamples::calcGroupStat()
 		std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
 
 		statistic[x.first] = stat_by_friquency;
+		summStatistics(global_statistic_by_word, s);
 	}
-	for (auto x : last_statistic_by_word)
-	{
-		summStatistics(global_statistic_by_word, x.second);
-	}
+
 	for (auto y : global_statistic_by_word)
 	{
 		global_statistic.push_back(std::make_pair(y.first, y.second));
 	}
-	std::sort(global_statistic.begin(), global_statistic.end(), StatByFriquencyCmp());
+	if (debug)
+
+		std::sort(global_statistic.begin(), global_statistic.end(), StatByFriquencyCmp());
+
 }
 
 void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask, bool accept)
@@ -525,19 +526,20 @@ std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 	for (auto c : covers)
 	{
 		std::vector<double> prob;
+
+		std::cout << "________________vector: ";
+		for (auto z : c)
+			std::cout << z << " ";
+		std::cout << std::endl;
+
 		for (auto x : samples)
 		{
 			prob.push_back(testCover(x.first, c));
-			/*
-			 std::cout<<"vector: ";
-			 for (auto z : c)
-			 std::cout << z << " ";
-			 std::cout << std::endl;
-			 std::cout << "probability #" << x.first << " = " << prob[prob.size() - 1] << std::endl;
-			 */
+			std::cout << "probability #" << x.first << " = " << prob[prob.size() - 1] << std::endl;
+
 		}
 		double current_entropy = entropy(prob);
-		//std::cout << "Entropy #" << i <<current_entropy <<std::endl;
+		std::cout << "Entropy #" << i <<current_entropy <<std::endl;
 		//std::cout << "---------------------------------" <<std::endl;
 		if (current_entropy < best_entropy)
 		{

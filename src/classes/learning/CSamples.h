@@ -26,12 +26,12 @@ namespace patterns
 class CSamples
 {
 
-	bool debud = true;
+	bool debug = true;
 
 	double entropy(std::vector<double> &data);
 	bool nextCombination(std::vector<int> & a, int n);
 
-	uint max_word_to_consider = 50;
+	uint max_word_to_consider = 1000;
 
 public:
 
