@@ -16,6 +16,7 @@ namespace patterns
 class TSignature
 {
 public:
+	uint place = 0; //место в глобальной статистике признаков
 	virtual uint test(CText *) = 0;
 	TSignature();
 	virtual ~TSignature();

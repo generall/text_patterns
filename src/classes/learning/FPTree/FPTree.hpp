@@ -38,9 +38,21 @@ public:
 				delete x.second;
 				//WARNING! SEGFAULT EXPECTED
 				node->offspring.erase(x.first);
-			}else{
+			}
+			else
+			{
 				rDelete0(x.second);
 			}
+		}
+	}
+
+	void rDetete1(FPNode<T> * node)
+	{
+		for (auto x : node->offspring)
+		{
+			rDelete1(x.second);
+			delete x.second;
+			node->offspring.erase(x.first);
 		}
 	}
 
@@ -90,11 +102,13 @@ public:
 		else
 		{
 			t = new FPNode<T>(v, current);
-			if(pointers.find(v) == pointers.end())
+			if (pointers.find(v) == pointers.end())
 			{
 				pointers[v] = std::make_pair(std::vector<FPNode<T>*>(), 1);
 				pointers[v].first.push_back(t);
-			}else{
+			}
+			else
+			{
 				pointers[v].second += 1;
 				pointers[v].first.push_back(t);
 			}
@@ -126,6 +140,7 @@ public:
 		}
 
 		rDelete0(root);
+
 		pointers.clear();
 		rebuidPointers(root);
 	}
@@ -137,7 +152,8 @@ public:
 			for (auto x : node->offspring)
 			{
 				std::cout << std::string(n, '-') << " ";
-				std::cout << x.first<< " : "<<x.second->count<<" :: "<<pointers[x.first].second << std::endl;
+				std::cout << x.first << " : " << x.second->count << " :: "
+						<< pointers[x.first].second << std::endl;
 				print(x.second, n + 1);
 			}
 		}

@@ -31,7 +31,7 @@ class CSamples
 	double entropy(std::vector<double> &data);
 	bool nextCombination(std::vector<int> & a, int n);
 
-	uint max_word_to_consider = 1000;
+	uint max_word_to_consider = 300;
 
 public:
 
@@ -41,8 +41,6 @@ public:
 	std::map<std::string, std::vector<std::pair<CWord *, int> > > statistic;
 	std::vector<std::pair<CWord *, int> > global_statistic;
 
-	std::map<std::string, std::vector<std::pair<CWord *, int> > > last_statistic;
-	std::map<std::string, std::map<CWord *, int, CWordCompare> > last_statistic_by_word;
 	std::map<CWord *, int, CWordCompare> global_statistic_by_word;
 
 	std::map<std::string, std::vector<bool> > last_accepted_mask;
@@ -54,12 +52,18 @@ public:
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_text;
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_sign;
 
+
+	//Признаки отсортированы по класстерам т.е. 1 - самый частый признак в кластере
 	std::map<std::string, std::vector<TSignature *> > group_signatures;
 	std::map<std::string, std::map<uint, std::map<uint, int> > > group_signature_matrix_by_text;
 	std::map<std::string, std::map<uint, std::map<uint, int> > > group_signature_matrix_by_sign;
 	std::map<std::string, std::map<uint, std::vector<uint> > > group_signature_matrix_by_text_sorted;
 
 	std::map<std::string, FPTree<uint> > FPtree;
+
+	std::map<std::string, std::vector<uint> > agregator;
+
+	uint groupToGlobal(uint index, const std::string &cluster);
 
 	void loadFromFiles(std::string dir, std::string stoplist, bool has_puncluation = false,
 			bool calcStatistics = false);
@@ -68,6 +72,7 @@ public:
 	void createGroupMatrix();
 	void createSortedMatrix();
 	void createFPTree();
+	void createAgregator();
 
 	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> phi,
 			std::vector<std::vector<uint> > &R);
@@ -77,8 +82,10 @@ public:
 	int getSignature(const std::string &cluster, uint text, uint sign);
 
 	double testCover(const std::string &cluster, const std::vector<int> &complex);
+	double testCoverAnd(const std::string &cluster, const std::vector<int> &complex);
 
 	std::vector<int> getBestCover(std::vector<std::vector<int> > &covers);
+	std::vector<int> getBestCoverAnd(std::vector<std::vector<int> > &covers);
 
 	void testPattern(const TPatternInterface &pattern);
 	void testPattern(const TPatternInterface &pattern,
@@ -86,7 +93,6 @@ public:
 			bool renew = false);
 
 	void calcGroupStat();
-	void calcGroupStat(std::map<std::string, std::vector<bool> > &mask, bool accept = true);
 
 	void summStatistics(std::map<CWord*, int, CWordCompare> &s1,
 			const std::map<CWord*, int, CWordCompare> &s2);

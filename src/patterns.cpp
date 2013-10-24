@@ -140,21 +140,25 @@ bool learningTest2(const string &group, int hard)
 	return true;
 }
 
-bool FPTreeTest()
+bool FPTreeTest(const string &group, uint hard)
 {
 	cout << "loading FPTreeTest" << endl;
 	patterns::CSamples s;
 	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
 	cout << "files loaded" << endl;
+	s.createMatrix();
+	cout << "Matrix generateg" << endl;
 	s.createGroupMatrix();
-	cout << "matrix generateg" << endl;
+	cout << "Group matrix generateg" << endl;
 	s.createSortedMatrix();
 	cout << "Sorted matrix generated" << endl;
 	s.createFPTree();
 	cout << "FPTree matrix generated" << endl;
+	s.createAgregator();
+	cout << "Agregator generated" << endl;
 
-	s.FPtree["algo"].print(s.FPtree["algo"].root, 0);
-	std::cout << s.FPtree["algo"].pointers.size() << " <-- tree uniq word size" << std::endl;
+	//s.FPtree["algo"].print(s.FPtree["algo"].root, 0);
+	std::cout << s.FPtree[group].pointers.size() << " <-- tree uniq word size" << std::endl;
 
 	/*
 	 for (auto x : s.group_signature_matrix_by_text_sorted["algo"])
@@ -175,15 +179,24 @@ bool FPTreeTest()
 	 }
 	 */
 
-	auto R = s.FPGrowth("algo", 6);
+	auto R = s.FPGrowth(group, hard);
 
-	for (auto x : R)
+	std::cout << "grop founded: " << R.size() << std::endl;
+
+	std::vector<std::vector<int> > converted;
+
+	for (uint i = 0; i < R.size(); i++)
 	{
-		for (auto y : x)
+		converted.push_back(std::vector<int>());
+		for (uint j = 0; j < R[i].size(); j++)
 		{
-			cout << y << " ";
+			converted[i].push_back(s.groupToGlobal(R[i][j], group));
 		}
-		cout << endl;
+	}
+	auto res = s.getBestCoverAnd(converted);
+	for (int i : res)
+	{
+		cout << s.global_statistic[i].first->value << endl;
 	}
 
 	return true;
@@ -192,11 +205,11 @@ bool FPTreeTest()
 int main()
 {
 
-	learningTest2("algo", 3);
+	//learningTest2("algo", 4);
 
-//learningTest2("DIY", 5);
+	//learningTest2("gadgets", 3);
 
-	/*
+
 	 patterns::FPTree<int> tt;
 
 	 tt.FPAdd(1);
@@ -214,11 +227,12 @@ int main()
 
 
 	 tt.print(tt.root,0);
-	 patterns::FPTree<int> tt2(tt, 3);
+	 patterns::FPTree<int> tt2(tt, 4);
 	 tt2.print(tt2.root,0);
-	 */
 
-//	FPTreeTest();
+
+	//FPTreeTest("algo", 70);
+
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())
 	{

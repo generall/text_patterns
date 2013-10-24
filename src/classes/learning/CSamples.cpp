@@ -84,40 +84,9 @@ void CSamples::calcGroupStat()
 	{
 		global_statistic.push_back(std::make_pair(y.first, y.second));
 	}
-	if (debug)
 
-		std::sort(global_statistic.begin(), global_statistic.end(), StatByFriquencyCmp());
+	std::sort(global_statistic.begin(), global_statistic.end(), StatByFriquencyCmp());
 
-}
-
-void CSamples::calcGroupStat(std::map<std::string, std::vector<bool> > &mask, bool accept)
-{
-	last_statistic.clear();
-	last_statistic_by_word.clear();
-	for (auto x : mask)
-	{
-		if (samples[x.first].size() != x.second.size())
-			throw std::logic_error("wrong mask");
-
-		std::map<CWord*, int, CWordCompare> s;
-
-		for (uint i = 0; i < samples[x.first].size(); i++)
-		{
-			if (x.second[i] == accept)
-			{
-				summStatistics(s, samples[x.first][i]->statistics);
-
-				std::vector<std::pair<CWord *, int>> stat_by_friquency;
-				for (auto y : s)
-				{
-					stat_by_friquency.push_back(std::make_pair(y.first, y.second));
-				}
-				std::sort(stat_by_friquency.begin(), stat_by_friquency.end(), StatByFriquencyCmp());
-				last_statistic[x.first] = stat_by_friquency;
-			}
-		}
-		last_statistic_by_word[x.first] = s;
-	}
 }
 
 void CSamples::testPattern(const TPatternInterface& pattern,
@@ -362,9 +331,15 @@ std::vector<std::vector<int> > CSamples::generateCovers(const std::string &clust
 		 */
 		for (uint i = already_estimated; i < maxlen; i++)
 		{
-			//	std::cout << "---------#" << i << "#----------" << std::endl;
-			//	int temp;
-			//	std::cin >> temp;
+
+			/*
+			 std::cout << "---------#" << i << "#----------" << std::endl;
+			 for (auto d : combination)
+			 std::cout << " " << d;
+			 std::cout << std::endl;
+			 int temp;
+			 std::cin >> temp;
+			 */
 			if (i == 0)
 			{
 				std::cout << combination[i] << std::endl;
@@ -423,7 +398,8 @@ std::vector<std::vector<int> > CSamples::generateCovers(const std::string &clust
 			if (delta == 0 && !generate_new_combination)
 			{
 				//std::cout << "cover is reached" << std::endl;
-				result.push_back(std::vector<int>(combination.begin(), combination.begin() + i));
+				result.push_back(
+						std::vector<int>(combination.begin(), combination.begin() + i + 1));
 				generate_new_combination = true;
 			}
 			//===================================================================================
@@ -518,6 +494,32 @@ double CSamples::testCover(const std::string& cluster, const std::vector<int>& c
 	return (double) n / (double) total_count;
 }
 
+double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>& complex)
+{
+	uint total_count = 0;
+	for (auto x : samples)
+		total_count += x.second.size();
+
+	int n = 0;
+	auto texts =  &signature_matrix_by_text[cluster];
+	for (auto text : *texts)
+	{
+		bool flag = true;
+		for (auto y : complex)
+		{
+			if (text.second.find(y) == text.second.end())
+			{
+				flag = false;
+				break;
+			}
+		}
+		if (flag)
+			n++;
+	}
+	return (double) n / (double) total_count;
+}
+
+
 std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 {
 	double best_entropy = 10005000;
@@ -539,7 +541,7 @@ std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 
 		}
 		double current_entropy = entropy(prob);
-		std::cout << "Entropy #" << i <<current_entropy <<std::endl;
+		std::cout << "Entropy #" << i << " " << current_entropy << std::endl;
 		//std::cout << "---------------------------------" <<std::endl;
 		if (current_entropy < best_entropy)
 		{
@@ -559,8 +561,7 @@ std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 		std::cout << "probability #" << x.first << " = " << prob[prob.size() - 1] << std::endl;
 	}
 
-	double current_entropy = entropy(prob);
-	std::cout << "Entropy #" << i << current_entropy << std::endl;
+	std::cout << "Entropy #" << " " << best_entropy << std::endl;
 	return covers[best_complex];
 }
 
@@ -577,7 +578,7 @@ void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 
 			//====DEBUG=====
 			std::cout << std::string(phi.size(), '>') << "create new tree with "
-					<< statistic["algo"][i->first].first->value << "# " << i->first << std::endl;
+					<< statistic["algo"][i->first].first->value << "# " << i->first <<" sup: "<<i->second.second << std::endl;
 
 			//++++DEBUG+++++
 
@@ -596,6 +597,76 @@ std::vector<std::vector<uint> > CSamples::FPGrowth(const std::string& cluster, i
 	std::vector<std::vector<uint> > res;
 	FPFind(FPtree[cluster], delta_min, std::vector<uint>(), res);
 	return res;
+}
+
+uint CSamples::groupToGlobal(uint index, const std::string& cluster)
+{
+	return agregator[cluster][index];
+}
+
+void CSamples::createAgregator()
+{
+	//построить карту, обратную глобальной статистике
+	std::map<CWord *, uint, CWordCompare> temp;
+	for (uint i = 0; i < global_statistic.size(); i++)
+	{
+		temp[global_statistic[i].first] = i;
+	}
+	for (auto cluster : statistic)
+	{
+		for (int i = 0; i < cluster.second.size(); i++)
+		{
+			agregator[cluster.first].push_back(temp[cluster.second[i].first]);
+		}
+	}
+}
+
+
+std::vector<int> CSamples::getBestCoverAnd(std::vector<std::vector<int> >& covers)
+{
+	double best_entropy = 10005000;
+	uint best_complex = 0;
+	int i = 0;
+	for (auto c : covers)
+	{
+		std::vector<double> prob;
+
+		/*
+		std::cout << "________________vector: ";
+		for (auto z : c)
+			std::cout << z << " ";
+		std::cout << std::endl;
+		*/
+
+		for (auto x : samples)
+		{
+			prob.push_back(testCoverAnd(x.first, c));
+			//std::cout << "probability #" << x.first << " = " << prob[prob.size() - 1] << std::endl;
+
+		}
+		double current_entropy = entropy(prob);
+		std::cout << "Entropy #" << i << " " << current_entropy << std::endl;
+		//std::cout << "---------------------------------" <<std::endl;
+		if (current_entropy < best_entropy)
+		{
+			best_entropy = current_entropy;
+			best_complex = i;
+		}
+		i++;
+	}
+	std::vector<double> prob;
+	for (auto x : samples)
+	{
+		prob.push_back(testCoverAnd(x.first, covers[best_complex]));
+		std::cout << "vector: ";
+		for (auto z : covers[best_complex])
+			std::cout << z << " ";
+		std::cout << std::endl;
+		std::cout << "probability #" << x.first << " = " << prob[prob.size() - 1] << std::endl;
+	}
+
+	std::cout << "Entropy #" << " " << best_entropy << std::endl;
+	return covers[best_complex];
 }
 
 CSamples::~CSamples()
