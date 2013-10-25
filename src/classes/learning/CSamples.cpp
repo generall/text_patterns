@@ -496,6 +496,8 @@ double CSamples::testCover(const std::string& cluster, const std::vector<int>& c
 
 double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>& complex)
 {
+
+	//переписать на более эффективную, выделять сначала все, которые подошли, потом полько на них накладывать маску
 	uint total_count = 0;
 	for (auto x : samples)
 		total_count += x.second.size();
