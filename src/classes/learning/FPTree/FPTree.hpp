@@ -131,9 +131,10 @@ public:
 		for (auto x : pointers[v].first)
 		{
 			FPNode<T> *temp = x;
+			int leave_count = temp->count;
 			while (temp->parent != NULL)
 			{
-				temp->parent->count += temp->count;
+				temp->parent->count += leave_count;
 				temp = temp->parent;
 			}
 			x->count = 0;

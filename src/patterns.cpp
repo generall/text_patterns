@@ -5,7 +5,7 @@
 // Copyright   : Your copyright notice
 // Description : Hello World in C++, Ansi-style
 //============================================================================
-//test commit
+
 #include <iostream>
 #include <string>
 #include <locale>
@@ -230,9 +230,11 @@ int main()
 	 tt.print(tt.root,0);
 	 patterns::FPTree<int> tt2(tt, 4);
 	 tt2.print(tt2.root,0);
+
 	*/
 
-	FPTreeTest("algo", 70);
+
+	FPTreeTest("algo", 45);
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())
