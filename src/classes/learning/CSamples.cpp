@@ -505,36 +505,39 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>
 	std::vector<std::pair<uint, int>> last_res;
 	for (uint i = 0; i < samples[cluster].size(); i++)
 	{
-		last_res.push_back(std::make_pair(i,1));
+		last_res.push_back(std::make_pair(i, 1));
 	}
 
 	for (auto sign : complex)
 	{
 		std::vector<std::pair<uint, int>> res;
 		auto texts = &signature_matrix_by_sign[cluster][sign];
-		std::set_intersection(texts->begin(), texts->end(), last_res.begin(), last_res.end(), res.begin(), CPairComparator());
+		//std::cout << "set_intersection" << std::endl;
+		auto it = std::set_intersection(texts->begin(), texts->end(), last_res.begin(),
+				last_res.end(), std::back_inserter(res), CPairComparator());
 		last_res = res;
 	}
 
 	/*
-	int n = 0;
-	auto texts = &signature_matrix_by_text[cluster];
-	for (auto text : *texts)
-	{
-		bool flag = true;
-		for (auto y : complex)
-		{
-			if (text.second.find(y) == text.second.end())
-			{
-				flag = false;
-				break;
-			}
-		}
-		if (flag)
-			n++;
-	}
-	*/
-	return (double) last_res.size() / (double) total_count;
+	 int n = 0;
+	 auto texts = &signature_matrix_by_text[cluster];
+	 for (auto text : *texts)
+	 {
+	 bool flag = true;
+	 for (auto y : complex)
+	 {
+	 if (text.second.find(y) == text.second.end())
+	 {
+	 flag = false;
+	 break;
+	 }
+	 }
+	 if (flag)
+	 n++;
+	 }
+	 */
+	//return (double) last_res.size() / (double) total_count;
+	return (double) last_res.size() / (double) samples[cluster].size();
 }
 
 std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
