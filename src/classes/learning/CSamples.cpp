@@ -500,8 +500,23 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>
 	for (auto x : samples)
 		total_count += x.second.size();
 
+	std::vector<std::pair<uint, int>> last_res;
+	for (uint i = 0; i < samples[cluster].size(); i++)
+	{
+		last_res.push_back(std::make_pair(i,1));
+	}
+
+	for (auto sign : complex)
+	{
+		std::vector<std::pair<uint, int>> res;
+		auto texts = &signature_matrix_by_sign[cluster][sign];
+		std::set_intersection(texts->begin(), texts->end(), last_res.begin(), last_res.end(), res.begin(), CPairComparator());
+		last_res = res;
+	}
+
+	/*
 	int n = 0;
-	auto texts =  &signature_matrix_by_text[cluster];
+	auto texts = &signature_matrix_by_text[cluster];
 	for (auto text : *texts)
 	{
 		bool flag = true;
@@ -516,9 +531,9 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>
 		if (flag)
 			n++;
 	}
-	return (double) n / (double) total_count;
+	*/
+	return (double) last_res.size() / (double) total_count;
 }
-
 
 std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
 {
@@ -578,7 +593,8 @@ void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 
 			//====DEBUG=====
 			std::cout << std::string(phi.size(), '>') << "create new tree with "
-					<< statistic["algo"][i->first].first->value << "# " << i->first <<" sup: "<<i->second.second << std::endl;
+					<< statistic["algo"][i->first].first->value << "# " << i->first << " sup: "
+					<< i->second.second << std::endl;
 
 			//++++DEBUG+++++
 
@@ -614,13 +630,12 @@ void CSamples::createAgregator()
 	}
 	for (auto cluster : statistic)
 	{
-		for (int i = 0; i < cluster.second.size(); i++)
+		for (uint i = 0; i < cluster.second.size(); i++)
 		{
 			agregator[cluster.first].push_back(temp[cluster.second[i].first]);
 		}
 	}
 }
-
 
 std::vector<int> CSamples::getBestCoverAnd(std::vector<std::vector<int> >& covers)
 {
@@ -632,11 +647,11 @@ std::vector<int> CSamples::getBestCoverAnd(std::vector<std::vector<int> >& cover
 		std::vector<double> prob;
 
 		/*
-		std::cout << "________________vector: ";
-		for (auto z : c)
-			std::cout << z << " ";
-		std::cout << std::endl;
-		*/
+		 std::cout << "________________vector: ";
+		 for (auto z : c)
+		 std::cout << z << " ";
+		 std::cout << std::endl;
+		 */
 
 		for (auto x : samples)
 		{

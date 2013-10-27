@@ -52,7 +52,6 @@ public:
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_text;
 	std::map<std::string, std::map<uint, std::map<uint, int> > > signature_matrix_by_sign;
 
-
 	//Признаки отсортированы по класстерам т.е. 1 - самый частый признак в кластере
 	std::map<std::string, std::vector<TSignature *> > group_signatures;
 	std::map<std::string, std::map<uint, std::map<uint, int> > > group_signature_matrix_by_text;
@@ -104,5 +103,18 @@ public:
 };
 
 } /* namespace patterns */
+
+class CPairComparator
+{
+public:
+	bool operator()(std::pair<const uint, int>  &w1, std::pair<uint, int> &w2)
+	{
+		return (w1.first < w2.first);
+	}
+	bool operator()(std::pair<uint, int> & w1, std::pair<const uint, int> &w2)
+	{
+		return (w1.first < w2.first);
+	}
+};
 
 #endif /* CSAMPLES_H_ */

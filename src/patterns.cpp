@@ -210,6 +210,7 @@ int main()
 	//learningTest2("gadgets", 3);
 
 
+	/*
 	 patterns::FPTree<int> tt;
 
 	 tt.FPAdd(1);
@@ -229,9 +230,9 @@ int main()
 	 tt.print(tt.root,0);
 	 patterns::FPTree<int> tt2(tt, 4);
 	 tt2.print(tt2.root,0);
+	*/
 
-
-	//FPTreeTest("algo", 70);
+	FPTreeTest("algo", 70);
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())
