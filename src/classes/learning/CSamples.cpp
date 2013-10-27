@@ -513,8 +513,8 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>
 		std::vector<std::pair<uint, int>> res;
 		auto texts = &signature_matrix_by_sign[cluster][sign];
 		//std::cout << "set_intersection" << std::endl;
-		auto it = std::set_intersection(texts->begin(), texts->end(), last_res.begin(),
-				last_res.end(), std::back_inserter(res), CPairComparator());
+		std::set_intersection(texts->begin(), texts->end(), last_res.begin(), last_res.end(),
+				std::back_inserter(res), CPairComparator());
 		last_res = res;
 	}
 
@@ -687,6 +687,19 @@ std::vector<int> CSamples::getBestCoverAnd(std::vector<std::vector<int> >& cover
 
 	std::cout << "Entropy #" << " " << best_entropy << std::endl;
 	return covers[best_complex];
+}
+
+void CSamples::createHyperspaceWordsOnly()
+{
+	hyper_points.clear();
+	for (auto cluster : samples)
+	{
+		for (auto x : signature_matrix_by_sign[cluster.first])
+		{
+			hyper_points[cluster.first].push_back(
+					(double) x.second.size() / (double) cluster.second.size());
+		}
+	}
 }
 
 CSamples::~CSamples()

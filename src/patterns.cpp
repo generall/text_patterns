@@ -234,7 +234,7 @@ int main()
 	*/
 
 
-	FPTreeTest("algo", 45);
+	FPTreeTest("coding", 20);
 
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())

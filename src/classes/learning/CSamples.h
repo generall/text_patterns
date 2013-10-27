@@ -62,6 +62,12 @@ public:
 
 	std::map<std::string, std::vector<uint> > agregator;
 
+	std::map<std::string, std::vector<double> > hyper_points;
+
+
+	void createHyperspaceWordsOnly();
+
+
 	uint groupToGlobal(uint index, const std::string &cluster);
 
 	void loadFromFiles(std::string dir, std::string stoplist, bool has_puncluation = false,
