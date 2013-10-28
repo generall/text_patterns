@@ -727,9 +727,10 @@ void CSamples::createHypeespaceWithComplex()
 			}
 			CComplexAndSing *sing_complex = new CComplexAndSing(temp);
 			signatures.push_back(sing_complex);
-			uint index = signatures.size() - 1;
 			double probability = testCoverAnd(x.first, complex);
 			hyper_points[x.first].push_back(probability);
+			//добавить добавление признаков в signature_matrix и group_signature_matrix
+
 		}
 	}
 }
