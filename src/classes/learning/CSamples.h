@@ -32,6 +32,7 @@ class CSamples
 	bool nextCombination(std::vector<int> & a, int n);
 
 	uint max_word_to_consider = 300;
+	uint min_supply = 20;
 
 public:
 
@@ -66,9 +67,11 @@ public:
 
 
 	void createHyperspaceWordsOnly();
+	void createHypeespaceWithComplex();
 
 
 	uint groupToGlobal(uint index, const std::string &cluster);
+	void groupToGlobal(std::vector<uint> &signs, const std::string &cluster);
 
 	void loadFromFiles(std::string dir, std::string stoplist, bool has_puncluation = false,
 			bool calcStatistics = false);
@@ -86,11 +89,11 @@ public:
 
 	int getSignature(const std::string &cluster, uint text, uint sign);
 
-	double testCover(const std::string &cluster, const std::vector<int> &complex);
-	double testCoverAnd(const std::string &cluster, const std::vector<int> &complex);
+	double testCover(const std::string &cluster, const std::vector<uint> &complex);
+	double testCoverAnd(const std::string &cluster, const std::vector<uint> &complex);
 
-	std::vector<int> getBestCover(std::vector<std::vector<int> > &covers);
-	std::vector<int> getBestCoverAnd(std::vector<std::vector<int> > &covers);
+	std::vector<int> getBestCover(std::vector<std::vector<uint> > &covers);
+	std::vector<int> getBestCoverAnd(std::vector<std::vector<uint> > &covers);
 
 	void testPattern(const TPatternInterface &pattern);
 	void testPattern(const TPatternInterface &pattern,

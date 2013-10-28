@@ -467,7 +467,7 @@ std::vector<std::vector<int> > CSamples::generateCovers(const std::string &clust
 	return result;
 }
 
-double CSamples::testCover(const std::string& cluster, const std::vector<int>& complex)
+double CSamples::testCover(const std::string& cluster, const std::vector<uint>& complex)
 {
 	std::vector<bool> mask;
 	mask.resize(samples[cluster].size(), false);
@@ -494,7 +494,7 @@ double CSamples::testCover(const std::string& cluster, const std::vector<int>& c
 	return (double) n / (double) total_count;
 }
 
-double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>& complex)
+double CSamples::testCoverAnd(const std::string& cluster, const std::vector<uint>& complex)
 {
 
 	//переписать на более эффективную, выделять сначала все, которые подошли, потом полько на них накладывать маску
@@ -540,7 +540,7 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<int>
 	return (double) last_res.size() / (double) samples[cluster].size();
 }
 
-std::vector<int> CSamples::getBestCover(std::vector<std::vector<int> >& covers)
+std::vector<int> CSamples::getBestCover(std::vector<std::vector<uint> >& covers)
 {
 	double best_entropy = 10005000;
 	uint best_complex = 0;
@@ -622,6 +622,10 @@ std::vector<std::vector<uint> > CSamples::FPGrowth(const std::string& cluster, i
 
 uint CSamples::groupToGlobal(uint index, const std::string& cluster)
 {
+	if(agregator[cluster].size() == 0)
+	{
+		createAgregator();
+	}
 	return agregator[cluster][index];
 }
 
@@ -642,7 +646,7 @@ void CSamples::createAgregator()
 	}
 }
 
-std::vector<int> CSamples::getBestCoverAnd(std::vector<std::vector<int> >& covers)
+std::vector<int> CSamples::getBestCoverAnd(std::vector<std::vector<uint> >& covers)
 {
 	double best_entropy = 10005000;
 	uint best_complex = 0;
@@ -699,6 +703,42 @@ void CSamples::createHyperspaceWordsOnly()
 			hyper_points[cluster.first].push_back(
 					(double) x.second.size() / (double) cluster.second.size());
 		}
+	}
+}
+
+void CSamples::createHypeespaceWithComplex()
+{
+	//получить комплексы со всех класстеров с различной поддержкой
+	//все комплексы конвертировать в глобальное представление с помощью agregator
+	//добавить сигнатуры в signatures
+	//посчитать значение покрытия и добавить в hyperspace
+	//как вариант, добавлять комплексы последовательно, кластер за кластером
+	//для каждого класса просчитать покрытие
+	for(auto x:samples)
+	{
+		auto R = FPGrowth(x.first, min_supply);
+		for(auto complex:R)
+		{
+			groupToGlobal(complex, x.first);
+			std::vector<CWord *> temp;
+			for(auto sign: complex)
+			{
+				temp.push_back(global_statistic[sign].first);
+			}
+			CComplexAndSing *sing_complex = new CComplexAndSing(temp);
+			signatures.push_back(sing_complex);
+			uint index = signatures.size() - 1;
+			double probability = testCoverAnd(x.first, complex);
+			hyper_points[x.first].push_back(probability);
+		}
+	}
+}
+
+void CSamples::groupToGlobal(std::vector<uint>& signs, const std::string& cluster)
+{
+	for(int i=0; i<signs; i++)
+	{
+		signs[i] = groupToGlobal(signs[i], cluster);
 	}
 }
 

@@ -183,11 +183,11 @@ bool FPTreeTest(const string &group, uint hard)
 
 	std::cout << "grop founded: " << R.size() << std::endl;
 
-	std::vector<std::vector<int> > converted;
+	std::vector<std::vector<uint> > converted;
 
 	for (uint i = 0; i < R.size(); i++)
 	{
-		converted.push_back(std::vector<int>());
+		converted.push_back(std::vector<uint>());
 		for (uint j = 0; j < R[i].size(); j++)
 		{
 			converted[i].push_back(s.groupToGlobal(R[i][j], group));
