@@ -202,13 +202,34 @@ bool FPTreeTest(const string &group, uint hard)
 	return true;
 }
 
+bool hyperspaceTest()
+{
+	cout << "Loading hyperspace test" << endl;
+
+	patterns::CSamples s;
+	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
+	s.init();
+	s.createHypeespaceWithComplex(false);
+	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
+
+	for (int i = 0; i < 50; i++)
+	{
+		s.signatures[i]->print();
+		for (auto clusters : s.hyper_points)
+		{
+			cout<<clusters.first<<" = "<<clusters.second[i]<<std::endl;
+		}
+	}
+	return true;
+}
+
 int main()
 {
 
+	hyperspaceTest();
 	//learningTest2("algo", 4);
 
 	//learningTest2("gadgets", 3);
-
 
 	/*
 	 patterns::FPTree<int> tt;
@@ -231,11 +252,9 @@ int main()
 	 patterns::FPTree<int> tt2(tt, 4);
 	 tt2.print(tt2.root,0);
 
-	*/
+	 */
 
-
-	FPTreeTest("coding", 20);
-
+	//FPTreeTest("coding", 20);
 	if (textPatternsTest() // && loadDictTest() && loadTextTest()
 	&& loadSamplesTest())
 	{

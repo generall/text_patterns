@@ -18,6 +18,7 @@ class CWordSign: public virtual patterns::TSignature
 public:
 	CWord* word = NULL;
 	virtual uint test(CText * text);
+	virtual void print();
 	CWordSign();
 	CWordSign(CWord* _word);
 	virtual ~CWordSign();

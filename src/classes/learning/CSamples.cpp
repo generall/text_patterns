@@ -277,30 +277,30 @@ double CSamples::entropy(std::vector<double>& data)
 	return -sigma;
 }
 
-bool CSamples::nextCombination(std::vector<int>& a, int n)
+bool CSamples::nextCombination(std::vector<uint>& a, int n)
 {
-	int k = (int) a.size();
-	for (int i = k - 1; i >= 0; --i)
+	uint k = (uint) a.size();
+	for (uint i = k - 1; i >= 0; --i)
 		if (a[i] < n - k + i + 1)
 		{
 			++a[i];
-			for (int j = i + 1; j < k; ++j)
+			for (uint j = i + 1; j < k; ++j)
 				a[j] = a[j - 1] + 1;
 			return true;
 		}
 	return false;
 }
 
-std::vector<std::vector<int> > CSamples::generateCovers(const std::string &cluster, uint maxlen)
+std::vector<std::vector<uint> > CSamples::generateCovers(const std::string &cluster, uint maxlen)
 {
 	createMatrix();
 
 	std::cout << "matrix creating complete" << std::endl;
 
 	uint n_doc = samples[cluster].size();
-	std::vector<int> combination, prev_comb;
-	std::vector<std::vector<int> > result;
-	std::vector<int> largest_cover;
+	std::vector<uint> combination, prev_comb;
+	std::vector<std::vector<uint> > result;
+	std::vector<uint> largest_cover;
 	uint largest_cover_num = n_doc;
 
 	combination.resize(maxlen);
@@ -399,7 +399,7 @@ std::vector<std::vector<int> > CSamples::generateCovers(const std::string &clust
 			{
 				//std::cout << "cover is reached" << std::endl;
 				result.push_back(
-						std::vector<int>(combination.begin(), combination.begin() + i + 1));
+						std::vector<uint>(combination.begin(), combination.begin() + i + 1));
 				generate_new_combination = true;
 			}
 			//===================================================================================
@@ -518,29 +518,42 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<uint
 		last_res = res;
 	}
 
-	/*
-	 int n = 0;
-	 auto texts = &signature_matrix_by_text[cluster];
-	 for (auto text : *texts)
-	 {
-	 bool flag = true;
-	 for (auto y : complex)
-	 {
-	 if (text.second.find(y) == text.second.end())
-	 {
-	 flag = false;
-	 break;
-	 }
-	 }
-	 if (flag)
-	 n++;
-	 }
-	 */
-	//return (double) last_res.size() / (double) total_count;
+	return (double) last_res.size() / (double) samples[cluster].size();
+}
+double CSamples::testCoverAnd(const std::string& cluster, const std::vector<uint>& complex,
+		std::vector<uint>& covered)
+{
+
+	//переписать на более эффективную, выделять сначала все, которые подошли, потом полько на них накладывать маску
+	uint total_count = 0;
+	for (auto x : samples)
+		total_count += x.second.size();
+
+	std::vector<std::pair<uint, int>> last_res;
+	for (uint i = 0; i < samples[cluster].size(); i++)
+	{
+		last_res.push_back(std::make_pair(i, 1));
+	}
+
+	for (auto sign : complex)
+	{
+		std::vector<std::pair<uint, int>> res;
+		auto texts = &signature_matrix_by_sign[cluster][sign];
+		//std::cout << "set_intersection" << std::endl;
+		std::set_intersection(texts->begin(), texts->end(), last_res.begin(), last_res.end(),
+				std::back_inserter(res), CPairComparator());
+		last_res = res;
+	}
+	covered.clear();
+	for (auto x : last_res)
+	{
+		covered.push_back(x.first);
+	}
+
 	return (double) last_res.size() / (double) samples[cluster].size();
 }
 
-std::vector<int> CSamples::getBestCover(std::vector<std::vector<uint> >& covers)
+std::vector<uint> CSamples::getBestCover(std::vector<std::vector<uint> >& covers)
 {
 	double best_entropy = 10005000;
 	uint best_complex = 0;
@@ -597,12 +610,13 @@ void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 		{
 
 			//====DEBUG=====
-			std::cout << std::string(phi.size(), '>') << "create new tree with "
-					<< statistic["algo"][i->first].first->value << "# " << i->first << " sup: "
-					<< i->second.second << std::endl;
 
+			/*
+			 std::cout << std::string(phi.size(), '>') << "create new tree with "
+			 << statistic["algo"][i->first].first->value << "# " << i->first << " sup: "
+			 << i->second.second << std::endl;
+			 */
 			//++++DEBUG+++++
-
 			std::vector<uint> phi_n = phi;
 			phi_n.push_back(i->first);
 			R.push_back(phi_n);
@@ -622,7 +636,7 @@ std::vector<std::vector<uint> > CSamples::FPGrowth(const std::string& cluster, i
 
 uint CSamples::groupToGlobal(uint index, const std::string& cluster)
 {
-	if(agregator[cluster].size() == 0)
+	if (agregator[cluster].size() == 0)
 	{
 		createAgregator();
 	}
@@ -646,7 +660,7 @@ void CSamples::createAgregator()
 	}
 }
 
-std::vector<int> CSamples::getBestCoverAnd(std::vector<std::vector<uint> >& covers)
+std::vector<uint> CSamples::getBestCoverAnd(std::vector<std::vector<uint> >& covers)
 {
 	double best_entropy = 10005000;
 	uint best_complex = 0;
@@ -706,7 +720,7 @@ void CSamples::createHyperspaceWordsOnly()
 	}
 }
 
-void CSamples::createHypeespaceWithComplex()
+void CSamples::createHypeespaceWithComplex(bool with_words)
 {
 	//получить комплексы со всех класстеров с различной поддержкой
 	//все комплексы конвертировать в глобальное представление с помощью agregator
@@ -714,32 +728,149 @@ void CSamples::createHypeespaceWithComplex()
 	//посчитать значение покрытия и добавить в hyperspace
 	//как вариант, добавлять комплексы последовательно, кластер за кластером
 	//для каждого класса просчитать покрытие
-	for(auto x:samples)
+	if (!with_words)
+	{
+		for (auto x : signatures)
+		{
+			delete x;
+		}
+		for (auto x : group_signatures)
+		{
+			for (auto y : x.second)
+			{
+				delete y;
+			}
+		}
+		signatures.clear();
+		group_signatures.clear();
+		hyper_points.clear();
+	}
+	double ready = 0;
+	for (auto x : samples)
 	{
 		auto R = FPGrowth(x.first, min_supply);
-		for(auto complex:R)
+		ready += 1.0 / (double) samples.size();
+		if (debug)
+			std::cout << "Ready: " << ready << std::endl;
+
+		for (auto complex : R)
 		{
+
 			groupToGlobal(complex, x.first);
+
 			std::vector<CWord *> temp;
-			for(auto sign: complex)
+			for (auto sign : complex)
 			{
 				temp.push_back(global_statistic[sign].first);
 			}
+
 			CComplexAndSing *sing_complex = new CComplexAndSing(temp);
 			signatures.push_back(sing_complex);
-			double probability = testCoverAnd(x.first, complex);
-			hyper_points[x.first].push_back(probability);
-			//добавить добавление признаков в signature_matrix и group_signature_matrix
+			uint sign_index = signatures.size() - 1;
 
+			//Добавление сигнатур по группам, не уверен что оно вообще нужно.
+			//CComplexAndSing *group_sign_complex = new CComplexAndSing(temp);
+			//group_signatures[x.first].push_back(group_sign_complex);
+			//uint group_sign_index = group_signatures[x.first].size() - 1;
+
+			std::vector<uint> covered;
+			double probability = testCoverAnd(x.first, complex, covered);
+			hyper_points[x.first].push_back(probability);
+			//добавление признаков в signature_matrix и group_signature_matrix
+			/*
+			 if (with_words)
+			 {
+			 for (auto y : covered)
+			 {
+			 signature_matrix_by_sign[x.first][sign_index][y] = 1;
+			 signature_matrix_by_text[x.first][y][sign_index] = 1;
+			 group_signature_matrix_by_sign[x.first][group_sign_index][y] = 1;
+			 group_signature_matrix_by_text[x.first][y][group_sign_index] = 1;
+			 }
+			 }
+			 */
 		}
 	}
 }
 
 void CSamples::groupToGlobal(std::vector<uint>& signs, const std::string& cluster)
 {
-	for(int i=0; i<signs; i++)
+	for (uint i = 0; i < signs.size(); i++)
 	{
 		signs[i] = groupToGlobal(signs[i], cluster);
+	}
+}
+
+void CSamples::init()
+{
+	createMatrix();
+	std::cout << "Matrix generated" << std::endl;
+	createGroupMatrix();
+	std::cout << "Group matrix generated" << std::endl;
+	createSortedMatrix();
+	std::cout << "Sorted matrix generated" << std::endl;
+	createFPTree();
+	std::cout << "FPTree matrix generated" << std::endl;
+	createAgregator();
+	std::cout << "Agregator generated" << std::endl;
+}
+
+void CSamples::deleteInsignificantDimensions(double factor)
+{
+
+
+	//Гипотера 1.
+	//Если дисперсия (на самом деле среднеквадратичное отклонение) маленькая - то ктритерий плохой.
+	//Удалять из signatures и hyper_points
+	std::vector<bool> todelete;
+	for (int i = 0; i < signatures.size(); i++)
+	{
+		double summ = 0;
+		for (auto cluster : hyper_points)
+		{
+			summ += cluster.second[i];
+		}
+		double expectation = summ / (double) hyper_points.size();
+		double dispersion = 0;
+		for (auto cluster : hyper_points)
+		{
+			dispersion += (cluster.second[i] - expectation) * (cluster.second[i] - expectation);
+		}
+		dispersion = dispersion / (double) hyper_points.size();
+		double standart_deviation = sqrt(dispersion);
+		if (standart_deviation < factor)
+		{
+			todelete.push_back(true);
+		}
+		else
+		{
+			todelete.push_back(false);
+		}
+	}
+	//real delete here
+
+	std::vector<TSignature *> new_signatures;
+	for (int i = 0; i < todelete.size(); i++)
+	{
+		if(!todelete[i])
+		{
+			new_signatures.push_back(signatures[i]);
+		}else{
+			delete signatures[i];
+		}
+	}
+	signatures = new_signatures;
+	for(auto cluster : hyper_points)
+	{
+		std::vector<double> new_point;
+		for(int i=0; i < todelete.size(); i++)
+		{
+			if(!todelete[i])
+			{
+				new_point.push_back(cluster.second[i]);
+			}
+		}
+		hyper_points[cluster.first] = new_point;
 	}
 }
 
@@ -752,7 +883,7 @@ CSamples::~CSamples()
 			delete y;
 		}
 	}
-//добавить удаление сигнатур
+//удаление сигнатур
 	for (auto x : signatures)
 	{
 		delete x;

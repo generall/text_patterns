@@ -18,9 +18,9 @@ CComplexAndSing::CComplexAndSing()
 
 uint CComplexAndSing::test(CText* text)
 {
-	for(auto x : signs)
+	for (auto x : signs)
 	{
-		if(CWordSign(x).test(text) == 0)
+		if (CWordSign(x).test(text) == 0)
 		{
 			return 0;
 		}
@@ -31,6 +31,15 @@ uint CComplexAndSing::test(CText* text)
 CComplexAndSing::CComplexAndSing(const std::vector<CWord*> &signs_)
 {
 	signs = signs_;
+}
+
+void CComplexAndSing::print()
+{
+	std::cout << "------&&------" << std::endl;
+	for (auto x : signs)
+	{
+		std::cout << x->value << std::endl;
+	}
 }
 
 CComplexAndSing::~CComplexAndSing()

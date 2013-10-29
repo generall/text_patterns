@@ -21,6 +21,7 @@ class CComplexAndSing: public patterns::TSignature
 public:
 	std::vector<CWord*> signs;
 
+	virtual void print();
 	virtual uint test(CText * text);
 	CComplexAndSing();
 	CComplexAndSing(const std::vector<CWord*> &signs_ );

@@ -28,10 +28,17 @@ uint CWordSign::test(CText* text)
 		if (i != text->statistics.end())
 		{
 			return i->second > 0 ? i->second : 0;
-		}else{
+		}
+		else
+		{
 			return 0;
 		}
 	}
+}
+
+void CWordSign::print()
+{
+	std::cout << word->value << std::endl;
 }
 
 CWordSign::~CWordSign()
@@ -43,7 +50,6 @@ CWordSign::CWordSign(CWord* _word)
 {
 	word = _word;
 }
-
 
 } /* namespace patterns */
 

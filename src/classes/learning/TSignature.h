@@ -17,6 +17,7 @@ class TSignature
 {
 public:
 	uint place = 0; //место в глобальной статистике признаков
+	virtual void print() = 0;
 	virtual uint test(CText *) = 0;
 	TSignature();
 	virtual ~TSignature();
