@@ -159,6 +159,9 @@ void CSamples::createMatrix()
 		signatures.push_back(new CWordSign(word_sign.first));
 	}
 
+	if (debug)
+		std::cout << "signatures.size: " << signatures.size() << std::endl;
+
 	for (auto cluster : samples)
 	{ //для каждого класстера
 
@@ -550,6 +553,25 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<uint
 		covered.push_back(x.first);
 	}
 
+	//+++++++++++++++++++++DEBUG
+	if (cluster == "infosecurity")
+	{
+		std::cout << "section ------" << cluster << "-------" << std::endl;
+		std::cout << "matching: " << last_res.size() << " of " << samples[cluster].size()
+				<< std::endl;
+		std::cout << "result: "<< (double) last_res.size() / (double) samples[cluster].size() << std::endl;
+		for (auto x : complex)
+		{
+
+			std::cout << "num: " << x << std::endl;
+			std::cout << global_statistic[x].first->value << std::endl;
+		}
+
+		int tmp1;
+		std::cin >> tmp1;
+	}
+	//++++++++++++++++++++++DEBUG
+
 	return (double) last_res.size() / (double) samples[cluster].size();
 }
 
@@ -766,7 +788,7 @@ void CSamples::createHypeespaceWithComplex(bool with_words)
 
 			CComplexAndSing *sing_complex = new CComplexAndSing(temp);
 			signatures.push_back(sing_complex);
-			uint sign_index = signatures.size() - 1;
+			//uint sign_index = signatures.size() - 1;
 
 			//Добавление сигнатур по группам, не уверен что оно вообще нужно.
 			//CComplexAndSing *group_sign_complex = new CComplexAndSing(temp);
@@ -774,7 +796,7 @@ void CSamples::createHypeespaceWithComplex(bool with_words)
 			//uint group_sign_index = group_signatures[x.first].size() - 1;
 
 			std::vector<uint> covered;
-			double probability = testCoverAnd(x.first, complex, covered);
+			double probability = testCoverAnd(x.first, complex, covered); // <---------- неверно, считать для всех
 			hyper_points[x.first].push_back(probability);
 			//добавление признаков в signature_matrix и group_signature_matrix
 			/*
@@ -818,12 +840,11 @@ void CSamples::init()
 void CSamples::deleteInsignificantDimensions(double factor)
 {
 
-
 	//Гипотера 1.
 	//Если дисперсия (на самом деле среднеквадратичное отклонение) маленькая - то ктритерий плохой.
 	//Удалять из signatures и hyper_points
 	std::vector<bool> todelete;
-	for (int i = 0; i < signatures.size(); i++)
+	for (uint i = 0; i < signatures.size(); i++)
 	{
 		double summ = 0;
 		for (auto cluster : hyper_points)
@@ -850,22 +871,24 @@ void CSamples::deleteInsignificantDimensions(double factor)
 	//real delete here
 
 	std::vector<TSignature *> new_signatures;
-	for (int i = 0; i < todelete.size(); i++)
+	for (uint i = 0; i < todelete.size(); i++)
 	{
-		if(!todelete[i])
+		if (!todelete[i])
 		{
 			new_signatures.push_back(signatures[i]);
-		}else{
+		}
+		else
+		{
 			delete signatures[i];
 		}
 	}
 	signatures = new_signatures;
-	for(auto cluster : hyper_points)
+	for (auto cluster : hyper_points)
 	{
 		std::vector<double> new_point;
-		for(int i=0; i < todelete.size(); i++)
+		for (uint i = 0; i < todelete.size(); i++)
 		{
-			if(!todelete[i])
+			if (!todelete[i])
 			{
 				new_point.push_back(cluster.second[i]);
 			}
