@@ -33,9 +33,10 @@ class CSamples
 	bool nextCombination(std::vector<uint> & a, int n);
 
 	uint max_word_to_consider = 300;
-	uint min_supply = 40;
 
 public:
+
+	uint min_supply = 40;
 
 	//глобальный массив примеров. Без структуры
 	std::map<std::string, std::vector<CText *> > samples;
@@ -118,6 +119,8 @@ public:
 
 	CSamples();
 	virtual ~CSamples();
+
+	void correctErase();
 };
 
 

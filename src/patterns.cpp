@@ -17,6 +17,8 @@
 #include "classes/text_representation/CText.h"
 #include "classes/learning/CSamples.h"
 #include "classes/conffiles.h"
+#include "functions/metric.hpp"
+#include "functions/TestClassifier.hpp"
 
 using namespace std;
 
@@ -209,42 +211,52 @@ bool hyperspaceTest()
 	patterns::CSamples s;
 	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
 	s.init();
-	s.createHypeespaceWithComplex(false);
-	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
-
-	for (int i = 0; i < 25; i++)
-	{
-		s.signatures[i]->print();
-		for (auto clusters : s.hyper_points)
-		{
-			cout << clusters.first << " = " << clusters.second[i] << std::endl;
-		}
-	}
-
-	s.deleteInsignificantDimensions(0.1);
-	cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-	for (int i = 0; i < 25; i++)
-	{
-		s.signatures[i]->print();
-		for (auto clusters : s.hyper_points)
-		{
-			cout << clusters.first << " = " << clusters.second[i] << std::endl;
-		}
-	}
-
-	std::cout << "start file loading" << endl;
 	patterns::CSamples test_texts;
 	test_texts.loadFromFiles(patterns::to_classify, patterns::stoplist, false, true);
-	cout << "test texts loaded" << endl;
 
-	std::vector<double> point;
-	s.createTextHyperPoint(test_texts.samples["algo"][0], point);
-	cout << "point for samples[\"algo\"][0]  created" << endl;
-	for (int i = 0; i < 25; i++)
+	/*
+	s.createHypeespaceWithComplex(false);
+	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
+	s.deleteInsignificantDimensions(0.1);
+	cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
+
+	double efficiency = patterns::testClassifier(s, test_texts);
+	cout << "min_supply = " << s.min_supply << "efficiency " << efficiency << endl;
+
+	for (int sup = 27; sup < 80; sup += 5)
 	{
-		s.signatures[i]->print();
-		std::cout << "text hyperpoint: " << point[i] << std::endl;
+		s.min_supply = sup;
+		s.createHypeespaceWithComplex(false);
+		cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
+		s.deleteInsignificantDimensions(0.1);
+		cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
+		efficiency = patterns::testClassifier(s, test_texts);
+		cout << "min_supply = " << s.min_supply << " efficiency " << efficiency << endl;
 	}
+
+*/
+	s.createHyperspaceWordsOnly();
+	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
+	//s.deleteInsignificantDimensions(0.1);
+	//cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
+	double efficiency = patterns::testClassifier(s, test_texts);
+	cout << "efficiency WordsOnly " << efficiency << endl;
+
+	/*
+	 std::vector<double> point;
+	 s.createTextHyperPoint(test_texts.samples["algo"][0], point);
+	 cout << "point for samples[\"algo\"][0]  created" << endl;
+	 for (int i = 0; i < 25; i++)
+	 {
+	 s.signatures[i]->print();
+	 std::cout << "text hyperpoint: " << point[i] << std::endl;
+	 }
+	 for (auto x : s.hyper_points)
+	 {
+	 std::cout << "distanation to " << x.first << " eq "
+	 << patterns::EuclideanDistance(x.second, point) << endl;
+	 }
+	 */
 
 	return true;
 }

@@ -148,11 +148,19 @@ void CSamples::testPattern(const TPatternInterface& pattern)
 
 void CSamples::createMatrix()
 {
+
 	//получаем глобальную статистику
 	if (statistic.size() == 0)
 	{
 		calcGroupStat();
 	}
+
+	/*
+	 correctErase();
+	 signature_matrix_by_sign.clear();
+	 signature_matrix_by_text.clear();
+	 */
+
 	//генерируем глобальные сигнатуры по словам
 	for (auto word_sign : global_statistic)
 	{
@@ -250,9 +258,9 @@ void CSamples::createFPTree()
 
 int CSamples::getSignature(const std::string &cluster, uint text, uint sign)
 {
-	auto matrix = signature_matrix_by_text[cluster];
-	auto i = matrix.find(text);
-	if (i != matrix.end())
+	auto matrix = &signature_matrix_by_text[cluster];
+	auto i = matrix->find(text);
+	if (i != matrix->end())
 	{
 		auto j = i->second.find(sign);
 		if (j != i->second.end())
@@ -736,10 +744,21 @@ void CSamples::createHyperspaceWordsOnly()
 	hyper_points.clear();
 	for (auto cluster : samples)
 	{
-		for (auto x : signature_matrix_by_sign[cluster.first])
+		//
+		for (uint i = 0; i < signatures.size(); i++)
 		{
-			hyper_points[cluster.first].push_back(
-					(double) x.second.size() / (double) cluster.second.size());
+			auto matrix = &signature_matrix_by_sign[cluster.first];
+
+			auto iter = matrix->find(i);
+			if (iter == matrix->end())
+			{
+				hyper_points[cluster.first].push_back(0.0);
+			}
+			else
+			{
+				hyper_points[cluster.first].push_back(
+						(double) iter->second.size() / (double) cluster.second.size());
+			}
 		}
 	}
 }
@@ -772,10 +791,15 @@ void CSamples::createHypeespaceWithComplex(bool with_words)
 	double ready = 0;
 	for (auto x : samples)
 	{
+		//std::cout << "Start FPGrowth with min_supply: " << min_supply << std::endl;
+
 		auto R = FPGrowth(x.first, min_supply);
 		ready += 1.0 / (double) samples.size();
-		if (debug)
-			std::cout << "Ready: " << ready << std::endl;
+
+		/*
+		 if (debug)
+		 std::cout << "Ready: " << ready << std::endl;
+		 */
 
 		for (auto complex : R)
 		{
@@ -908,10 +932,12 @@ void CSamples::createTextHyperPoint(CText* text, std::vector<double>& hyper_poin
 	for (int i = 0; i < signatures.size(); i++)
 	{
 		uint result = signatures[i]->test(text);
-		if(result >= 1)//Bynary hypothesis
+		if (result >= 1)	//Bynary hypothesis
 		{
 			hyper_point.push_back(1.0);
-		}else{
+		}
+		else
+		{
 			hyper_point.push_back(0.0);
 		}
 	}
@@ -939,6 +965,25 @@ CSamples::~CSamples()
 			delete y;
 		}
 	}
+}
+
+void CSamples::correctErase()
+{
+	//удаление сигнатур
+	for (auto x : signatures)
+	{
+		delete x;
+	}
+	//удаление груповых сигнатур
+	for (auto x : group_signatures)
+	{
+		for (auto y : x.second)
+		{
+			delete y;
+		}
+	}
+	signatures.clear();
+	group_signatures.clear();
 }
 
 } /* namespace patterns */
