@@ -16,6 +16,7 @@ namespace patterns
 
 std::string root = "/home/generall/Dropbox/code/Ruby/habraloader";
 std::string stoplist = "fric.txt";
+std::string to_classify = "/home/generall/Dropbox/code/Ruby/habraloader/test";
 
 }
 

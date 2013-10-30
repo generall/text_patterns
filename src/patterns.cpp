@@ -212,14 +212,40 @@ bool hyperspaceTest()
 	s.createHypeespaceWithComplex(false);
 	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
 
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 25; i++)
 	{
 		s.signatures[i]->print();
 		for (auto clusters : s.hyper_points)
 		{
-			cout<<clusters.first<<" = "<<clusters.second[i]<<std::endl;
+			cout << clusters.first << " = " << clusters.second[i] << std::endl;
 		}
 	}
+
+	s.deleteInsignificantDimensions(0.1);
+	cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
+	for (int i = 0; i < 25; i++)
+	{
+		s.signatures[i]->print();
+		for (auto clusters : s.hyper_points)
+		{
+			cout << clusters.first << " = " << clusters.second[i] << std::endl;
+		}
+	}
+
+	std::cout << "start file loading" << endl;
+	patterns::CSamples test_texts;
+	test_texts.loadFromFiles(patterns::to_classify, patterns::stoplist, false, true);
+	cout << "test texts loaded" << endl;
+
+	std::vector<double> point;
+	s.createTextHyperPoint(test_texts.samples["algo"][0], point);
+	cout << "point for samples[\"algo\"][0]  created" << endl;
+	for (int i = 0; i < 25; i++)
+	{
+		s.signatures[i]->print();
+		std::cout << "text hyperpoint: " << point[i] << std::endl;
+	}
+
 	return true;
 }
 

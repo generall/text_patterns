@@ -554,24 +554,26 @@ double CSamples::testCoverAnd(const std::string& cluster, const std::vector<uint
 	}
 
 	//+++++++++++++++++++++DEBUG
-	if (cluster == "infosecurity")
-	{
-		std::cout << "section ------" << cluster << "-------" << std::endl;
-		std::cout << "matching: " << last_res.size() << " of " << samples[cluster].size()
-				<< std::endl;
-		std::cout << "result: "<< (double) last_res.size() / (double) samples[cluster].size() << std::endl;
-		for (auto x : complex)
-		{
+	/*
+	 if (cluster == "infosecurity")
+	 {
+	 std::cout << "section ------" << cluster << "-------" << std::endl;
+	 std::cout << "matching: " << last_res.size() << " of " << samples[cluster].size()
+	 << std::endl;
+	 std::cout << "result: " << (double) last_res.size() / (double) samples[cluster].size()
+	 << std::endl;
+	 for (auto x : complex)
+	 {
 
-			std::cout << "num: " << x << std::endl;
-			std::cout << global_statistic[x].first->value << std::endl;
-		}
+	 std::cout << "num: " << x << std::endl;
+	 std::cout << global_statistic[x].first->value << std::endl;
+	 }
 
-		int tmp1;
-		std::cin >> tmp1;
-	}
+	 int tmp1;
+	 std::cin >> tmp1;
+	 }
+	 */
 	//++++++++++++++++++++++DEBUG
-
 	return (double) last_res.size() / (double) samples[cluster].size();
 }
 
@@ -795,9 +797,12 @@ void CSamples::createHypeespaceWithComplex(bool with_words)
 			//group_signatures[x.first].push_back(group_sign_complex);
 			//uint group_sign_index = group_signatures[x.first].size() - 1;
 
-			std::vector<uint> covered;
-			double probability = testCoverAnd(x.first, complex, covered); // <---------- неверно, считать для всех
-			hyper_points[x.first].push_back(probability);
+			for (auto y : samples)
+			{
+				std::vector<uint> covered;
+				double probability = testCoverAnd(y.first, complex, covered);
+				hyper_points[y.first].push_back(probability);
+			}
 			//добавление признаков в signature_matrix и group_signature_matrix
 			/*
 			 if (with_words)
@@ -839,7 +844,7 @@ void CSamples::init()
 
 void CSamples::deleteInsignificantDimensions(double factor)
 {
-
+	//TODO: добавить удаление повторяющихся признаков.
 	//Гипотера 1.
 	//Если дисперсия (на самом деле среднеквадратичное отклонение) маленькая - то ктритерий плохой.
 	//Удалять из signatures и hyper_points
@@ -894,6 +899,21 @@ void CSamples::deleteInsignificantDimensions(double factor)
 			}
 		}
 		hyper_points[cluster.first] = new_point;
+	}
+}
+
+void CSamples::createTextHyperPoint(CText* text, std::vector<double>& hyper_point)
+{
+	hyper_point.clear();
+	for (int i = 0; i < signatures.size(); i++)
+	{
+		uint result = signatures[i]->test(text);
+		if(result >= 1)//Bynary hypothesis
+		{
+			hyper_point.push_back(1.0);
+		}else{
+			hyper_point.push_back(0.0);
+		}
 	}
 }
 

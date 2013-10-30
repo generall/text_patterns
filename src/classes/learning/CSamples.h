@@ -74,6 +74,8 @@ public:
 	void createHyperspaceWordsOnly();
 	void createHypeespaceWithComplex(bool with_words = false);
 	void deleteInsignificantDimensions(double factor);
+	void createTextHyperPoint(CText* text, std::vector<double> &hyper_point);
+
 
 	uint groupToGlobal(uint index, const std::string &cluster);
 	void groupToGlobal(std::vector<uint> &signs, const std::string &cluster);
@@ -118,7 +120,7 @@ public:
 	virtual ~CSamples();
 };
 
-} /* namespace patterns */
+
 
 class CPairComparator
 {
@@ -133,4 +135,5 @@ public:
 	}
 };
 
+} /* namespace patterns */
 #endif /* CSAMPLES_H_ */
