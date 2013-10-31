@@ -631,8 +631,9 @@ std::vector<uint> CSamples::getBestCover(std::vector<std::vector<uint> >& covers
 }
 
 void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
-		std::vector<std::vector<uint> > &R)
+		std::vector<std::vector<uint> > &R, bool max_only)
 {
+	bool is_finish = true;
 	if (tree.pointers.size() == 0)
 		return;
 	auto i = --tree.pointers.end();
@@ -640,6 +641,7 @@ void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 	{
 		if (i->second.second >= delta_min)
 		{
+			is_finish = false;
 
 			//====DEBUG=====
 
@@ -651,18 +653,22 @@ void CSamples::FPFind(FPTree<uint>& tree, int delta_min, std::vector<uint> phi,
 			//++++DEBUG+++++
 			std::vector<uint> phi_n = phi;
 			phi_n.push_back(i->first);
-			R.push_back(phi_n);
+			if (!max_only)
+				R.push_back(phi_n);
 			FPTree<uint> CFPTree(tree, i->first); //строим условное дерево
-			FPFind(CFPTree, delta_min, phi_n, R);
+			FPFind(CFPTree, delta_min, phi_n, R, max_only);
 		}
 		--i;
 	}
+	if (max_only && is_finish)
+		R.push_back(phi);
 }
 
-std::vector<std::vector<uint> > CSamples::FPGrowth(const std::string& cluster, int delta_min)
+std::vector<std::vector<uint> > CSamples::FPGrowth(const std::string& cluster, int delta_min,
+		bool max_only)
 {
 	std::vector<std::vector<uint> > res;
-	FPFind(FPtree[cluster], delta_min, std::vector<uint>(), res);
+	FPFind(FPtree[cluster], delta_min, std::vector<uint>(), res, max_only);
 	return res;
 }
 
@@ -763,7 +769,7 @@ void CSamples::createHyperspaceWordsOnly()
 	}
 }
 
-void CSamples::createHypeespaceWithComplex(bool with_words)
+void CSamples::createHypeespaceWithComplex(bool with_words, bool max_only)
 {
 	//получить комплексы со всех класстеров с различной поддержкой
 	//все комплексы конвертировать в глобальное представление с помощью agregator
@@ -793,7 +799,7 @@ void CSamples::createHypeespaceWithComplex(bool with_words)
 	{
 		//std::cout << "Start FPGrowth with min_supply: " << min_supply << std::endl;
 
-		auto R = FPGrowth(x.first, min_supply);
+		auto R = FPGrowth(x.first, min_supply, max_only);
 		ready += 1.0 / (double) samples.size();
 
 		/*
@@ -929,7 +935,7 @@ void CSamples::deleteInsignificantDimensions(double factor)
 void CSamples::createTextHyperPoint(CText* text, std::vector<double>& hyper_point)
 {
 	hyper_point.clear();
-	for (int i = 0; i < signatures.size(); i++)
+	for (uint i = 0; i < signatures.size(); i++)
 	{
 		uint result = signatures[i]->test(text);
 		if (result >= 1)	//Bynary hypothesis

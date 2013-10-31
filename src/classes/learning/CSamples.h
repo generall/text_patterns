@@ -73,7 +73,7 @@ public:
 	//ALERT!
 	//После выполнения этих процедер signature_matrix* становятся неактуальными и отображают неверные признаки относительно signature
 	void createHyperspaceWordsOnly();
-	void createHypeespaceWithComplex(bool with_words = false);
+	void createHypeespaceWithComplex(bool with_words = false,bool max_only = false);
 	void deleteInsignificantDimensions(double factor);
 	void createTextHyperPoint(CText* text, std::vector<double> &hyper_point);
 
@@ -91,9 +91,9 @@ public:
 	void createAgregator();
 
 	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> phi,
-			std::vector<std::vector<uint> > &R);
+			std::vector<std::vector<uint> > &R, bool max_only = false);
 
-	std::vector<std::vector<uint> > FPGrowth(const std::string &cluster, int delta_min);
+	std::vector<std::vector<uint> > FPGrowth(const std::string &cluster, int delta_min, bool max_only = false);
 
 	int getSignature(const std::string &cluster, uint text, uint sign);
 

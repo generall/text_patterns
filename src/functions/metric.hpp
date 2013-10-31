@@ -14,21 +14,76 @@
 namespace patterns
 {
 
-template<typename T>
-T EuclideanDistance(const std::vector<T> &p1, const std::vector<T> &p2)
+class TClassifierInterface
 {
-	T summ = 0;
-	if (p1.size() != p2.size())
+public:
+	virtual double compare(const std::vector<double> &sample,
+			const std::vector<double> &example) = 0;
+	virtual ~TClassifierInterface()
 	{
-		throw std::logic_error("Wrong vector Dimension");
 	}
-	for (int i = 0; i < p1.size(); i++)
-	{
-		summ += (p1[i] - p2[i]) * (p1[i] - p2[i]);
-	}
-	return sqrt(summ);
+};
 
-}
+class CEuclideanDistance: public TClassifierInterface
+{
+public:
+	virtual double compare(const std::vector<double> &sample, const std::vector<double> &example)
+	{
+		double summ = 0;
+		if (sample.size() != example.size())
+		{
+			throw std::logic_error("Wrong vector Dimension");
+		}
+		for (uint i = 0; i < sample.size(); i++)
+		{
+			summ += (sample[i] - example[i]) * (sample[i] - example[i]);
+		}
+		return sqrt(summ);
+	}
+};
+
+class CNaiveBayes: public TClassifierInterface
+{
+public:
+	double compare(const std::vector<double> &sample, const std::vector<double> &example)
+	{
+		double log_summ = 0;
+
+		if (sample.size() != example.size())
+		{
+			throw std::logic_error("Wrong vector Dimension");
+		}
+
+		for (uint i = 0; i < example.size(); i++)
+		{
+			if (example[i] > 0.5)
+			{ //i.e. == 1, in this context
+			  //считаем вероятность появление 1
+				if (sample[i] < std::numeric_limits<double>::epsilon())
+				{
+					log_summ += -log(1E-7);
+				}
+				else
+				{
+					log_summ += -log(sample[i]);
+				}
+			}
+			else
+			{
+				double value = 1.0 - sample[i];	//вероятность того, что признака нет = 1-P, где P - вероятность того, что признак есть
+				if (value < std::numeric_limits<double>::epsilon())
+				{
+					log_summ += -log(1E-7);
+				}
+				else
+				{
+					log_summ += -log(value);
+				}
+			}
+		}
+		return log_summ;
+	}
+};
 
 }
 #endif /* METRIC_HPP_ */

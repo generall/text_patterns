@@ -14,7 +14,7 @@
 namespace patterns
 {
 
-double testClassifier(CSamples &teaching_selection, CSamples &examples)
+double testClassifier(CSamples &teaching_selection, CSamples &examples, TClassifierInterface *classifier)
 {
 
 	uint correct = 0;
@@ -31,7 +31,7 @@ double testClassifier(CSamples &teaching_selection, CSamples &examples)
 
 			for (auto selection_hyperpoint : teaching_selection.hyper_points)
 			{
-				double dist = EuclideanDistance(selection_hyperpoint.second, point);
+				double dist = classifier->compare(selection_hyperpoint.second, point);
 				if (dist < min_dist)
 				{
 					nearest_cluster = selection_hyperpoint.first;
