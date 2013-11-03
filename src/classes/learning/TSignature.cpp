@@ -12,13 +12,12 @@ namespace patterns
 
 TSignature::TSignature()
 {
-	// TODO Auto-generated constructor stub
+	//
 
 }
 
 TSignature::~TSignature()
 {
-	// TODO Auto-generated destructor stub
 }
 
 } /* namespace patterns */

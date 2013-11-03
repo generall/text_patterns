@@ -12,7 +12,6 @@ namespace patterns
 
 CComplexAndSing::CComplexAndSing()
 {
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -44,7 +43,6 @@ void CComplexAndSing::print()
 
 CComplexAndSing::~CComplexAndSing()
 {
-	// TODO Auto-generated destructor stub
 }
 
 } /* namespace patterns */

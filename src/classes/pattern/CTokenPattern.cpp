@@ -14,7 +14,6 @@ CTokenPattern::CTokenPattern() :
 		typeOfMatching(m_Levenshtein)
 {
 	delta = 0;
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -46,7 +45,7 @@ CTokenPattern::CTokenPattern(uint d,const std::string &v)
 
 CTokenPattern::~CTokenPattern()
 {
-// TODO Auto-generated destructor stub
+//
 }
 
 CTokenPattern::CTokenPattern(TypeOfMatching t) :

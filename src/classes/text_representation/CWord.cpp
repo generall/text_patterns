@@ -30,7 +30,7 @@ CWord::CWord(std::string s) :
 
 CWord::~CWord()
 {
-	// TODO Auto-generated destructor stub
+
 }
 
 }

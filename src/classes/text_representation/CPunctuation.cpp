@@ -23,7 +23,7 @@ CPunctuation::CPunctuation(PunctuationType p) : punctuationType(p)
 CPunctuation::~CPunctuation()
 {
 
-	// TODO Auto-generated destructor stub
+
 }
 
 }

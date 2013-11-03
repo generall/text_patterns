@@ -12,7 +12,6 @@ namespace patterns
 
 CText::CText()
 {
-	// TODO Auto-generated constructor stub
 
 }
 

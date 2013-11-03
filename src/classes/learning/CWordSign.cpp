@@ -12,7 +12,7 @@ namespace patterns
 
 CWordSign::CWordSign()
 {
-	// TODO Auto-generated constructor stub
+	//
 
 }
 
@@ -43,7 +43,6 @@ void CWordSign::print()
 
 CWordSign::~CWordSign()
 {
-	// TODO Auto-generated destructor stub
 }
 
 CWordSign::CWordSign(CWord* _word)

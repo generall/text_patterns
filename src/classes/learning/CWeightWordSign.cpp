@@ -12,7 +12,6 @@ namespace patterns
 
 CWeightWordSign::CWeightWordSign()
 {
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -44,7 +43,7 @@ CWeightWordSign::CWeightWordSign(CWord* word) :
 
 CWeightWordSign::~CWeightWordSign()
 {
-	// TODO Auto-generated destructor stub
+	//
 }
 
 } /* namespace patterns */

@@ -13,7 +13,6 @@ namespace patterns
 CDelay::CDelay()
 {
 	maxDelayNumber = 0;
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -37,7 +36,6 @@ void CDelay::addUnacceptablePattern(CTokenPattern& p)
 
 CDelay::~CDelay()
 {
-	// TODO Auto-generated destructor stub
 }
 
 } /* namespace patterns */

@@ -12,7 +12,7 @@ namespace patterns
 
 CPatternComplex::CPatternComplex()
 {
-	// TODO Auto-generated constructor stub
+
 
 }
 
@@ -54,7 +54,7 @@ uint CPatternComplex::cmp(std::vector<CToken>& text) const
 
 CPatternComplex::~CPatternComplex()
 {
-	// TODO Auto-generated destructor stub
+
 }
 
 } /* namespace patterns */

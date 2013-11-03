@@ -13,7 +13,7 @@ namespace patterns
 CToken::CToken() :
 		type(type_none)
 {
-	// TODO Auto-generated constructor stub
+
 
 }
 
@@ -25,7 +25,7 @@ CToken::CToken(TokenType t) :
 
 CToken::~CToken()
 {
-	// TODO Auto-generated destructor stub
+
 }
 
 }
