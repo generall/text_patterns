@@ -27,7 +27,7 @@ uint CWordSign::test(CText* text)
 		auto i = text->statistics.find(word);
 		if (i != text->statistics.end())
 		{
-			return i->second > 0 ? i->second : 0;
+			return i->second > 0 ? 1 : 0;
 		}
 		else
 		{

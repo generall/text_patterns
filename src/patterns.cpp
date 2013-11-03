@@ -242,15 +242,16 @@ bool hyperspaceTest()
 
 
 	 s.min_supply = 45;
-	 s.createHyperspaceWordsOnly();
+	 s.createWeightedWordHyperspace();
 	 //s.createHypeespaceWithComplex(true, true);
 
 	 cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
 	 //s.deleteInsignificantDimensions(0.1);
 	 //cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-	 double efficiency = patterns::testClassifier(s, test_texts, &bayes);
-	 cout << "efficiency Words + Complex " << efficiency << endl;
-
+	 double efficiency = patterns::testClassifier(s, test_texts, &euclide);
+	 cout << "efficiency silly normal Words " << efficiency << endl;
+	 //binary: 0.788732
+	 //nonbin: 0.760563 <--- no wonder on this planet
 
 	/*
 	 std::vector<double> point;

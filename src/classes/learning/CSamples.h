@@ -20,6 +20,7 @@
 #include "CWordSign.h"
 #include "CComplexAndSing.h"
 #include "FPTree/FPTree.hpp"
+#include "CWeightWordSign.h"
 
 namespace patterns
 {
@@ -66,14 +67,18 @@ public:
 	std::map<std::string, std::vector<uint> > agregator;
 
 	std::map<std::string, std::vector<double> > hyper_points;
+	std::map<std::string, std::vector<double> > hyper_points_dispersion;
 
 	void init();
 
 
-	//ALERT!
+	void createBinaryDispersion();
+	void createWeightedDispersion();
+	//ALERT!s
 	//После выполнения этих процедер signature_matrix* становятся неактуальными и отображают неверные признаки относительно signature
 	void createHyperspaceWordsOnly();
-	void createHypeespaceWithComplex(bool with_words = false,bool max_only = false);
+	void createWeightedWordHyperspace();
+	void createHyperspaceWithComplex(bool with_words = false,bool max_only = false);
 	void deleteInsignificantDimensions(double factor);
 	void createTextHyperPoint(CText* text, std::vector<double> &hyper_point);
 

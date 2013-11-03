@@ -769,7 +769,7 @@ void CSamples::createHyperspaceWordsOnly()
 	}
 }
 
-void CSamples::createHypeespaceWithComplex(bool with_words, bool max_only)
+void CSamples::createHyperspaceWithComplex(bool with_words, bool max_only)
 {
 	//получить комплексы со всех класстеров с различной поддержкой
 	//все комплексы конвертировать в глобальное представление с помощью agregator
@@ -938,14 +938,18 @@ void CSamples::createTextHyperPoint(CText* text, std::vector<double>& hyper_poin
 	for (uint i = 0; i < signatures.size(); i++)
 	{
 		uint result = signatures[i]->test(text);
-		if (result >= 1)	//Bynary hypothesis
-		{
-			hyper_point.push_back(1.0);
-		}
-		else
-		{
-			hyper_point.push_back(0.0);
-		}
+		hyper_point.push_back(result);	//nonbynary, но старые сигнатуры дадут бинарные данные
+
+		/*
+		 if (result >= 1)	//Bynary hypothesis
+		 {
+		 hyper_point.push_back(1.0);
+		 }
+		 else
+		 {
+		 hyper_point.push_back(0.0);
+		 }
+		 */
 	}
 }
 
@@ -960,7 +964,7 @@ CSamples::~CSamples()
 	}
 //удаление сигнатур
 	for (auto x : signatures)
-	{
+	{	//
 		delete x;
 	}
 //удаление груповых сигнатур
@@ -969,6 +973,44 @@ CSamples::~CSamples()
 		for (auto y : x.second)
 		{
 			delete y;
+		}
+	}
+}
+
+void CSamples::createWeightedWordHyperspace()
+{
+	uint size = signatures.size();
+
+	std::vector<TSignature *> new_sign; //пересоздание вектора сигнатур
+	for (auto x : signatures)
+	{
+		new_sign.push_back(new CWeightWordSign(dynamic_cast<CWordSign *>(x)->word));
+	}
+	correctErase();
+	signatures = new_sign;
+
+	hyper_points.clear();
+	for (auto cluster : samples)
+	{
+		//
+		for (uint i = 0; i < size; i++)
+		{
+			double summ = 0;
+			auto matrix = &signature_matrix_by_sign[cluster.first];
+			auto iter = matrix->find(i);
+			if (iter == matrix->end())
+			{
+				//признака не существует -> мат. ожидание = 0;
+				hyper_points[cluster.first].push_back(0.0);
+			}
+			else
+			{
+				for (auto text : iter->second)
+				{
+					summ += text.second;
+				}
+				hyper_points[cluster.first].push_back(summ / (double) cluster.second.size());
+			}
 		}
 	}
 }
@@ -990,6 +1032,23 @@ void CSamples::correctErase()
 	}
 	signatures.clear();
 	group_signatures.clear();
+}
+
+void CSamples::createBinaryDispersion()
+{
+	for (auto clusters : hyper_points)
+	{
+		for (uint i = 0; i < clusters.second.size(); i++)
+		{
+			double summ = 0;
+			uint positive_size = signature_matrix_by_sign[clusters.first][i].size();
+			uint negative_size = clusters.second.size() - positive_size;
+			summ = (1.0 - clusters.second[i]) * (1.0 - clusters.second[i]) * positive_size
+					+ clusters.second[i] * clusters.second[i] * negative_size;
+			summ = summ / clusters.second.size();
+			hyper_points_dispersion[clusters.first].push_back(summ);
+		}
+	}
 }
 
 } /* namespace patterns */
