@@ -74,7 +74,7 @@ public:
 
 	void createBinaryDispersion();
 
-	//TODO съэмплементить
+
 	//TODO добавиь вычисление расстояния махланобиса (по идее, оно не будет зависеть от бинарности, а только от входных данных, с нормализацией и без.)
 	void createWeightedDispersion();
 	//ALERT!s

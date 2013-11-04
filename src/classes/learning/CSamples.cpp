@@ -1051,5 +1051,28 @@ void CSamples::createBinaryDispersion()
 	}
 }
 
+void CSamples::createWeightedDispersion()
+{
+	for (auto clusters : hyper_points)
+	{
+		for (uint i = 0; i < clusters.second.size(); i++)
+		{
+			//кол-во текстов со встречанием признака = 0;
+			uint negative_size = clusters.second.size()
+					- signature_matrix_by_sign[clusters.first][i].size();
+			double summ = 0;
+			for (auto x : signature_matrix_by_sign[clusters.first][i])
+			{
+				//SIGMA(	(X		-		MX)			^  2)
+				summ += pow(x.second - clusters.second[i], 2);
+			}
+			// + where X = 0
+			summ += negative_size * (pow(clusters.second[i], 2));
+			summ = summ / clusters.second.size(); // summ = M[(X-MX)^2]
+			hyper_points_dispersion[clusters.first].push_back(summ);
+		}
+	}
+}
+
 } /* namespace patterns */
 

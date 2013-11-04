@@ -31,6 +31,9 @@ double testClassifier(CSamples &teaching_selection, CSamples &examples, TClassif
 
 			for (auto selection_hyperpoint : teaching_selection.hyper_points)
 			{
+				//инициализация классификатора дисперсией (существенна только для Махланобиса)
+				classifier->init_dispersion(teaching_selection.hyper_points_dispersion[selection_hyperpoint.first]);
+
 				double dist = classifier->compare(selection_hyperpoint.second, point);
 				if (dist < min_dist)
 				{

@@ -19,6 +19,9 @@ class TClassifierInterface
 public:
 	virtual double compare(const std::vector<double> &sample,
 			const std::vector<double> &example) = 0;
+	virtual void init_dispersion(const std::vector<double> &disp)
+	{
+	}
 	virtual ~TClassifierInterface()
 	{
 	}
@@ -69,6 +72,57 @@ public:
 		}
 		return sqrt(summ);
 	}
+};
+
+class CMahlanobisDistance: public TClassifierInterface
+{
+public:
+	std::vector<double> correlation;
+
+	virtual void init_dispersion(const std::vector<double> &disp)
+	{
+		correlation = disp;
+	}
+
+	double normalizeVector(std::vector<double> &vector)
+	{
+		//для векторов, полученных из единичного документа.
+		double length = 0;
+		for (uint i = 0; i < vector.size(); i++)
+		{
+			length += vector[i] * vector[i];
+		}
+		length = sqrt(length);
+		for (uint i = 0; i < vector.size(); i++)
+		{
+			vector[i] = vector[i] / length;
+		}
+		return length;
+	}
+	virtual double compare(const std::vector<double> &sample, const std::vector<double> &example)
+	{
+		//normalize vector before.
+		auto n_sample = sample;
+		auto n_example = example;
+		//normalizeVector(n_sample);
+		//normalizeVector(n_example);
+
+		double summ = 0;
+		if (n_sample.size() != n_example.size())
+		{
+			throw std::logic_error("Wrong vector Dimension");
+		}
+		if(n_sample.size() != correlation.size())
+		{
+			throw std::logic_error("Wrong correlation Dimension");
+		}
+		for (uint i = 0; i < n_sample.size(); i++)
+		{
+			summ += (n_sample[i] - n_example[i]) * (n_sample[i] - n_example[i])/correlation[i];
+		}
+		return sqrt(summ);
+	}
+
 };
 
 class CNaiveBayes: public TClassifierInterface
