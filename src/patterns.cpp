@@ -216,42 +216,53 @@ bool hyperspaceTest()
 
 	patterns::CEuclideanDistance euclide;
 	patterns::CNaiveBayes bayes;
-
-
+	patterns::CMahlanobisDistance mahlanobis;
 
 	/*
-	s.createHypeespaceWithComplex(false, true);
-	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
-	s.deleteInsignificantDimensions(0.01);
-	cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-
-	double efficiency = patterns::testClassifier(s, test_texts, &bayes);
-	cout << "min_supply = " << s.min_supply << " efficiency " << efficiency << endl;
-
-	for (int sup = 30; sup < 80; sup += 5)
-	{
-		s.min_supply = sup;
-		s.createHypeespaceWithComplex(false, true);
-		cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
-		s.deleteInsignificantDimensions(0.01);
-		cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-		efficiency = patterns::testClassifier(s, test_texts, &bayes);
-		cout << "min_supply = " << s.min_supply << " efficiency " << efficiency << endl;
-	}
-	*/
-
-
-	 s.min_supply = 45;
-	 s.createWeightedWordHyperspace();
-	 //s.createHypeespaceWithComplex(true, true);
-
+	 s.createHypeespaceWithComplex(false, true);
 	 cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
-	 //s.deleteInsignificantDimensions(0.1);
-	 //cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-	 double efficiency = patterns::testClassifier(s, test_texts, &euclide);
-	 cout << "efficiency silly normal Words " << efficiency << endl;
-	 //binary: 0.788732
-	 //nonbin: 0.760563 <--- no wonder on this planet
+	 s.deleteInsignificantDimensions(0.01);
+	 cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
+
+	 double efficiency = patterns::testClassifier(s, test_texts, &bayes);
+	 cout << "min_supply = " << s.min_supply << " efficiency " << efficiency << endl;
+
+	 for (int sup = 30; sup < 80; sup += 5)
+	 {
+	 s.min_supply = sup;
+	 s.createHypeespaceWithComplex(false, true);
+	 cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
+	 s.deleteInsignificantDimensions(0.01);
+	 cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
+	 efficiency = patterns::testClassifier(s, test_texts, &bayes);
+	 cout << "min_supply = " << s.min_supply << " efficiency " << efficiency << endl;
+	 }
+	 */
+
+	s.min_supply = 45;
+	s.createWeightedWordHyperspace();
+	s.createWeightedDispersion();
+	//s.createHyperspaceWordsOnly();
+	//s.createBinaryDispersion();
+	//s.createHypeespaceWithComplex(true, true);
+
+
+	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
+	//s.deleteInsignificantDimensions(0.1);
+	//cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
+	double efficiency = patterns::testClassifier(s, test_texts, &mahlanobis);
+	cout << "efficiency silly normal Words " << efficiency << endl;
+	//binary: 0.788732
+	//nonbin: 0.760563 <--- no wonder on this planet
+
+	//Mahlanobis
+	//Бинарно:
+	// С нормализацией: 64%
+	// без нормализации: 64.7%
+	//Признак с учетом кол-ва слов:
+	// С нормализацией: 64.7%
+	// Без нормализации: 61.2%
+
 
 	/*
 	 std::vector<double> point;
