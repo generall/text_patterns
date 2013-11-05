@@ -29,10 +29,11 @@ namespace patterns
 class CText
 {
 
-	std::vector<CToken*> text;
+
 
 public:
 
+	std::vector<CToken*> text;
 	std::map<CWord*, int, CWordCompare> statistics;
 	std::vector<std::pair<CWord *, int>> stat_by_friquency;
 	std::string stoplist;

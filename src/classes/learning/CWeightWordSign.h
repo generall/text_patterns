@@ -17,7 +17,7 @@ namespace patterns
 class CWeightWordSign: public patterns::CWordSign
 {
 public:
-	virtual uint test(CText *);
+	virtual double test(CText *);
 	CWeightWordSign();
 	CWeightWordSign(CWord * word);
 

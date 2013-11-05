@@ -14,7 +14,8 @@
 namespace patterns
 {
 
-double testClassifier(CSamples &teaching_selection, CSamples &examples, TClassifierInterface *classifier)
+double testClassifier(CSamples &teaching_selection, CSamples &examples,
+		TClassifierInterface *classifier)
 {
 
 	uint correct = 0;
@@ -32,7 +33,8 @@ double testClassifier(CSamples &teaching_selection, CSamples &examples, TClassif
 			for (auto selection_hyperpoint : teaching_selection.hyper_points)
 			{
 				//инициализация классификатора дисперсией (существенна только для Махланобиса)
-				classifier->init_dispersion(teaching_selection.hyper_points_dispersion[selection_hyperpoint.first]);
+				classifier->init_dispersion(
+						teaching_selection.hyper_points_dispersion[selection_hyperpoint.first]);
 
 				double dist = classifier->compare(selection_hyperpoint.second, point);
 				if (dist < min_dist)
@@ -48,9 +50,9 @@ double testClassifier(CSamples &teaching_selection, CSamples &examples, TClassif
 			else
 			{
 				/*
-				std::cout << "Wrong: " << nearest_cluster << " actualy is " << target_clusler
-						<< " min_dist: " << min_dist << std::endl;
-				*/
+				 std::cout << "Wrong: " << nearest_cluster << " actualy is " << target_clusler
+				 << " min_dist: " << min_dist << std::endl;
+				 */
 			}
 			total++;
 			//std::cout << correct << " of " << total << std::endl;
@@ -58,6 +60,7 @@ double testClassifier(CSamples &teaching_selection, CSamples &examples, TClassif
 	}
 	return (double) correct / (double) total;
 }
+
 
 }
 #endif /* TESTCLASSIFIER_HPP_ */

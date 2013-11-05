@@ -15,7 +15,7 @@ CWeightWordSign::CWeightWordSign()
 
 }
 
-uint CWeightWordSign::test(CText* text)
+double CWeightWordSign::test(CText* text)
 {
 	if (word == NULL)
 	{

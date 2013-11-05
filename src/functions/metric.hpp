@@ -27,6 +27,28 @@ public:
 	}
 };
 
+class CAngle: public TClassifierInterface
+{
+public:
+	virtual double compare(const std::vector<double> &sample, const std::vector<double> &example)
+	{
+		double dot_product, length_a, length_b;
+		if (sample.size() != example.size())
+		{
+			throw std::logic_error("Wrong vector Dimension");
+		}
+
+		for (uint i = 0; i < sample.size(); i++)
+		{
+			dot_product += sample[i] * example[i];
+			length_a += pow(sample[i], 2);
+			length_b += pow(example[i], 2);
+		}
+		double cos_a = dot_product / (sqrt(length_a) * sqrt(length_b));
+		return acos(cos_a);
+	}
+};
+
 class CEuclideanDistance: public TClassifierInterface
 {
 public:
@@ -105,15 +127,15 @@ public:
 		auto n_sample = sample;
 		auto n_example = example;
 
+		/*
+		 double correction = 1.0 / normalizeVector(n_sample);
+		 normalizeVector(n_example);
 
-		double correction = 1.0 / normalizeVector(n_sample);
-		normalizeVector(n_example);
-
-		for (uint i = 0; i < correlation.size(); i++)
-		{
-			correlation[i] = correlation[i]*correction*correction; // D[aX] = a^2 D[X]
-		}
-
+		 for (uint i = 0; i < correlation.size(); i++)
+		 {
+		 correlation[i] = correlation[i] * correction * correction; // D[aX] = a^2 D[X]
+		 }
+		 */
 
 		double summ = 0;
 		if (n_sample.size() != n_example.size())
@@ -128,7 +150,9 @@ public:
 		{
 			if (correlation[i] < std::numeric_limits<double>::epsilon())
 			{		//eq 0
+
 				summ += (n_sample[i] - n_example[i]) * (n_sample[i] - n_example[i]) / 1E-7;
+
 			}
 			else
 			{		// neq 0
@@ -183,6 +207,8 @@ public:
 		return log_summ;
 	}
 };
+
+
 
 }
 #endif /* METRIC_HPP_ */

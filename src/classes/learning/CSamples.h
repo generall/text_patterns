@@ -50,6 +50,8 @@ public:
 	std::map<std::string, std::vector<bool> > last_accepted_mask;
 	std::map<std::string, std::pair<uint, uint> > last_patter_statistic;
 
+
+
 	//глобальный массив признаков.
 	std::vector<TSignature *> signatures;
 	//глобальная матрица Текст-признак по класстерам
@@ -71,20 +73,22 @@ public:
 
 	void init();
 
+	//TF-IDF
+	void createTFMatrix();
+	void createDF();
+
 
 	void createBinaryDispersion();
-
-
 	//TODO добавиь вычисление расстояния махланобиса (по идее, оно не будет зависеть от бинарности, а только от входных данных, с нормализацией и без.)
 	void createWeightedDispersion();
 	//ALERT!s
 	//После выполнения этих процедер signature_matrix* становятся неактуальными и отображают неверные признаки относительно signature
 	void createHyperspaceWordsOnly();
+	void createTFDFHyperspace();
 	void createWeightedWordHyperspace();
-	void createHyperspaceWithComplex(bool with_words = false,bool max_only = false);
+	void createHyperspaceWithComplex(bool with_words = false, bool max_only = false);
 	void deleteInsignificantDimensions(double factor);
 	void createTextHyperPoint(CText* text, std::vector<double> &hyper_point);
-
 
 	uint groupToGlobal(uint index, const std::string &cluster);
 	void groupToGlobal(std::vector<uint> &signs, const std::string &cluster);
@@ -101,14 +105,15 @@ public:
 	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> phi,
 			std::vector<std::vector<uint> > &R, bool max_only = false);
 
-	std::vector<std::vector<uint> > FPGrowth(const std::string &cluster, int delta_min, bool max_only = false);
+	std::vector<std::vector<uint> > FPGrowth(const std::string &cluster, int delta_min,
+			bool max_only = false);
 
 	int getSignature(const std::string &cluster, uint text, uint sign);
 
-
 	double testCover(const std::string &cluster, const std::vector<uint> &complex);
 	double testCoverAnd(const std::string &cluster, const std::vector<uint> &complex);
-	double testCoverAnd(const std::string &cluster, const std::vector<uint> &complex, std::vector<uint> &covered);
+	double testCoverAnd(const std::string &cluster, const std::vector<uint> &complex,
+			std::vector<uint> &covered);
 
 	std::vector<uint> getBestCover(std::vector<std::vector<uint> > &covers);
 	std::vector<uint> getBestCoverAnd(std::vector<std::vector<uint> > &covers);
@@ -131,12 +136,10 @@ public:
 	void correctErase();
 };
 
-
-
 class CPairComparator
 {
 public:
-	bool operator()(std::pair<const uint, int>  &w1, std::pair<uint, int> &w2)
+	bool operator()(std::pair<const uint, int> &w1, std::pair<uint, int> &w2)
 	{
 		return (w1.first < w2.first);
 	}

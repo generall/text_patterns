@@ -15,7 +15,7 @@ CComplexAndSing::CComplexAndSing()
 
 }
 
-uint CComplexAndSing::test(CText* text)
+double CComplexAndSing::test(CText* text)
 {
 	for (auto x : signs)
 	{

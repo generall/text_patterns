@@ -1015,6 +1015,7 @@ void CSamples::createWeightedWordHyperspace()
 	}
 }
 
+
 void CSamples::correctErase()
 {
 	//удаление сигнатур
@@ -1043,8 +1044,11 @@ void CSamples::createBinaryDispersion()
 			double summ = 0;
 			uint positive_size = signature_matrix_by_sign[clusters.first][i].size();
 			uint negative_size = clusters.second.size() - positive_size;
-			summ = (1.0 - clusters.second[i]) * (1.0 - clusters.second[i]) * positive_size
-					+ clusters.second[i] * clusters.second[i] * negative_size;
+			// DX = M[|X-MX|^2]
+			//clusters.second[i] = MX
+			summ = pow((1.0 - clusters.second[i]), 2) * positive_size
+					+ pow(clusters.second[i], 2) * negative_size;
+
 			summ = summ / clusters.second.size();
 			hyper_points_dispersion[clusters.first].push_back(summ);
 		}

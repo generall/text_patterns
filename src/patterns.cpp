@@ -217,6 +217,7 @@ bool hyperspaceTest()
 	patterns::CEuclideanDistance euclide;
 	patterns::CNaiveBayes bayes;
 	patterns::CMahlanobisDistance mahlanobis;
+	patterns::CAngle angle;
 
 	/*
 	 s.createHypeespaceWithComplex(false, true);
@@ -241,7 +242,7 @@ bool hyperspaceTest()
 
 	s.min_supply = 45;
 	s.createWeightedWordHyperspace();
-	s.createWeightedDispersion();
+	//s.createWeightedDispersion();
 	//s.createHyperspaceWordsOnly();
 	//s.createBinaryDispersion();
 	//s.createHypeespaceWithComplex(true, true);
@@ -250,7 +251,7 @@ bool hyperspaceTest()
 	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
 	//s.deleteInsignificantDimensions(0.1);
 	//cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-	double efficiency = patterns::testClassifier(s, test_texts, &mahlanobis);
+	double efficiency = patterns::testClassifier(s, test_texts, &angle);
 	cout << "efficiency silly normal Words " << efficiency << endl;
 	//binary: 0.788732
 	//nonbin: 0.760563 <--- no wonder on this planet
@@ -262,6 +263,8 @@ bool hyperspaceTest()
 	//Признак с учетом кол-ва слов:
 	// С нормализацией: 64.7%
 	// Без нормализации: 61.2%
+
+	//0.788732
 
 
 	/*

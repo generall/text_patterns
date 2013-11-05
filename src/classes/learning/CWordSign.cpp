@@ -16,7 +16,7 @@ CWordSign::CWordSign()
 
 }
 
-uint CWordSign::test(CText* text)
+double CWordSign::test(CText* text)
 {
 	if (word == NULL)
 	{

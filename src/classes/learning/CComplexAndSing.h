@@ -22,7 +22,7 @@ public:
 	std::vector<CWord*> signs;
 
 	virtual void print();
-	virtual uint test(CText * text);
+	virtual double test(CText * text);
 	CComplexAndSing();
 	CComplexAndSing(const std::vector<CWord*> &signs_ );
 	virtual ~CComplexAndSing();
