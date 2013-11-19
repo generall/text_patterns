@@ -71,6 +71,18 @@ bool loadTextTest()
 	return true;
 }
 
+bool loadTextXMLTest()
+{
+	patterns::CText xml_tree;
+	xml_tree.setStoplist(patterns::root, patterns::stoplist);
+	xml_tree.loadFromXml("/home/generall/temp/", "tree.xml");
+	for (int i = 0; i < 15; i++)
+	{
+		cout << xml_tree.text[i]->value << endl;
+	}
+	return true;
+}
+
 bool loadSamplesTest()
 {
 	patterns::CSamples s;
@@ -240,18 +252,17 @@ bool hyperspaceTest()
 	 }
 	 */
 
-	s.min_supply = 45;
-	s.createWeightedWordHyperspace();
+	s.min_supply = 50;
+	s.createHyperspaceWithComplex(false, true);
+	//s.createWeightedWordHyperspace();
 	//s.createWeightedDispersion();
 	//s.createHyperspaceWordsOnly();
-	//s.createBinaryDispersion();
-	//s.createHypeespaceWithComplex(true, true);
-
+	s.createBinaryDispersion();
 
 	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
 	//s.deleteInsignificantDimensions(0.1);
 	//cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-	double efficiency = patterns::testClassifier(s, test_texts, &angle);
+	double efficiency = patterns::testClassifier(s, test_texts, &mahlanobis);
 	cout << "efficiency silly normal Words " << efficiency << endl;
 	//binary: 0.788732
 	//nonbin: 0.760563 <--- no wonder on this planet
@@ -265,7 +276,6 @@ bool hyperspaceTest()
 	// Без нормализации: 61.2%
 
 	//0.788732
-
 
 	/*
 	 std::vector<double> point;
@@ -283,8 +293,9 @@ bool hyperspaceTest()
 
 int main()
 {
+	loadTextXMLTest();
 
-	hyperspaceTest();
+	//hyperspaceTest();
 	//learningTest2("algo", 4);
 
 	//learningTest2("gadgets", 3);

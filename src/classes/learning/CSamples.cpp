@@ -20,6 +20,11 @@ void CSamples::loadFromFiles(std::string dir, std::string stoplist, bool has_pun
 		bool calcStatistics)
 {
 
+	//загрузить глобальный stop-list
+
+	CDict stop_list;
+	stop_list.loadSimple(dir + "/" + stoplist);
+
 	//загрузить список из flist.txt
 	std::fstream flist((dir + "/flist.txt").c_str(), std::ios::in);
 	if (flist.good())
@@ -32,7 +37,8 @@ void CSamples::loadFromFiles(std::string dir, std::string stoplist, bool has_pun
 			std::getline(flist, filename, ' ');
 			std::getline(flist, classter);
 			CText *t = new CText();
-			t->stoplist = stoplist;
+			t->initStopDic(stop_list);
+			//t->setStoplist(dir, stoplist);
 
 			t->loadFromMytsem(dir, filename, has_puncluation);
 
@@ -1014,7 +1020,6 @@ void CSamples::createWeightedWordHyperspace()
 		}
 	}
 }
-
 
 void CSamples::correctErase()
 {

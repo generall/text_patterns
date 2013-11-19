@@ -15,13 +15,23 @@ CText::CText()
 
 }
 
+void CText::setStoplist(const std::string &dir,const std::string &st_list)
+{
+	stoplist = st_list;
+	if (stoplist.size() > 0)
+		stop_list.loadSimple(dir + "/" + stoplist);
+
+}
+
+void CText::initStopDic(CDict& dict)
+{
+	stop_list = dict;
+}
+
 void CText::loadFromMytsem(const std::string &dir, const std::string &filename,
 		bool has_punctuation)
 {
 
-	CDict stop_list;
-	if (stoplist.size() > 0)
-		stop_list.loadSimple(dir + "/" + stoplist);
 
 	std::setlocale(LC_ALL, "ru_RU.UTF-8");
 	std::fstream in((dir + "/" + filename).c_str(), std::ios::in);
@@ -127,5 +137,51 @@ int CText::testPatetrn(const TPatternInterface& pattern)
 	return pattern.cmp(text);
 }
 
+void CText::loadFromXml(const std::string& dir, const std::string& filename)
+{
+	loadFromXml(dir + filename);
+}
+
+void CText::loadFromXml(const std::string& filename)
+{
+	TiXmlDocument doc(filename.c_str());
+	doc.LoadFile(TIXML_ENCODING_UTF8);
+	TiXmlElement *root = doc.FirstChildElement("semantrees");
+	if (root)
+	{
+		TiXmlElement *tree = root->FirstChildElement("tree");
+		while(tree)
+		{
+			TiXmlElement *src_form = tree->FirstChildElement("source_forms");
+			if(src_form)
+			{
+				TiXmlElement *form = src_form->FirstChildElement("form");
+				while(form)
+				{
+					std::string first_form(form->Attribute("srcform"));
+
+					CWord *w = new CWord(first_form);
+					w->wordType = w_default; // because atribN is not useful !
+					if (stop_list.findWord(first_form) == -1 && first_form.size() >= 3)
+					{
+						text.push_back(w);
+					}
+					form = form->NextSiblingElement("form");
+
+				}
+			}
+
+			tree = tree->NextSiblingElement("tree");
+		}
+	}
+	else
+	{
+		throw std::logic_error("Incorrect XML");
+	}
+
+}
+
+
 } /* namespace patterns */
+
 

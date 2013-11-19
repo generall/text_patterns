@@ -22,6 +22,8 @@
 #include "../pattern/libmathing.h"
 #include "../pattern/TPatternInterface.h"
 #include "CDict.h"
+#include "tinyxml/tinyxml.h"
+#include "tinyxml/tinystr.h"
 
 namespace patterns
 {
@@ -29,16 +31,24 @@ namespace patterns
 class CText
 {
 
-
+	CDict stop_list;
+	std::string stoplist;
 
 public:
 
 	std::vector<CToken*> text;
 	std::map<CWord*, int, CWordCompare> statistics;
 	std::vector<std::pair<CWord *, int>> stat_by_friquency;
-	std::string stoplist;
+
 
 	void loadFromMytsem(const std::string &dir, const std::string &filename, bool has_punctuation = true);
+	void loadFromXml(const std::string &dir, const std::string &filename);
+	void loadFromXml(const std::string &filename);
+
+
+	void setStoplist(const std::string &dir,const std::string &st_list);
+	void initStopDic(CDict &dict);
+
 	void performStatistics();
 	int testPatetrn(const TPatternInterface &pattern);
 
