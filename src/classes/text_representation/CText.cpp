@@ -90,6 +90,7 @@ void CText::loadFromMytsem(const std::string &dir, const std::string &filename,
 		n++;
 	}
 	in.close();
+	file_name = dir + "/" + filename;
 }
 
 void CText::performStatistics()
@@ -178,7 +179,7 @@ void CText::loadFromXml(const std::string& filename)
 	{
 		throw std::logic_error("Incorrect XML");
 	}
-
+	file_name = filename;
 }
 
 

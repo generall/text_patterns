@@ -17,6 +17,7 @@
 #include "classes/text_representation/CText.h"
 #include "classes/learning/CSamples.h"
 #include "classes/conffiles.h"
+#include "classes/CConfig.h"
 #include "functions/metric.hpp"
 #include "functions/TestClassifier.hpp"
 
@@ -29,6 +30,18 @@ void pause(char *label)
 	std::cin >> i;
 }
 
+bool configTest()
+{
+	patterns::CConfig config;
+	config.loadConfig("/home/generall/temp/conf.txt");
+	if (config.getValue("dir") == "ololo" && config.getValue("ololo") == "")
+	{
+		return true;
+	}
+	return false;
+}
+
+/*
 bool textPatternsTest()
 {
 	std::string text =
@@ -62,7 +75,7 @@ bool textPatternsTest()
 		return true;
 	return false;
 }
-
+*/
 bool loadTextTest()
 {
 	patterns::CText asimov;
@@ -83,51 +96,6 @@ bool loadTextXMLTest()
 	return true;
 }
 
-bool loadSamplesTest()
-{
-	patterns::CSamples s;
-	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
-
-	string recv;
-	cin >> recv;
-	while (recv != "exit")
-	{
-		patterns::CPatternComplex complex;
-
-		string or_val;
-		cin >> or_val;
-		while (or_val != "break")
-		{
-			patterns::CDelay delay;
-			patterns::CTextPattern tp;
-			patterns::CTokenPattern tokenPattern(2, or_val);
-
-			delay.maxDelayNumber = 0;
-			tokenPattern.typeOfMatching = patterns::m_full;
-			auto temp_pair = std::make_pair(delay, tokenPattern);
-			tp.addBack(temp_pair);
-			std::vector<patterns::CTextPattern> impl;
-			impl.push_back(tp);
-			complex.DNF.push_back(impl);
-			cin >> or_val;
-		}
-		s.testPattern(complex);
-		cin >> recv;
-	}
-
-	s.calcGroupStat();
-
-	if (s.samples.size() == 5)
-	{
-		std::cout << "sample true" << std::endl;
-		return true;
-	}
-	else
-	{
-		std::cout << "sample fails" << std::endl;
-		return false;
-	}
-}
 
 bool learningTest2(const string &group, int hard)
 {
@@ -220,15 +188,40 @@ bool hyperspaceTest()
 {
 	cout << "Loading hyperspace test" << endl;
 
-	patterns::CSamples s;
-	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
-	s.init();
-	patterns::CSamples test_texts;
-	test_texts.loadFromFiles(patterns::to_classify, patterns::stoplist, false, true);
+	patterns::CConfig config;
 
-	patterns::CEuclideanDistance euclide;
-	patterns::CNaiveBayes bayes;
-	patterns::CMahlanobisDistance mahlanobis;
+	config.loadConfig("/home/generall/Dropbox/code/Ruby/habraloader/config.txt"); //загружать из argv
+
+	bool use_xml = true;
+	use_xml = config.getValue("USE_XML") != "NO";
+
+	auto clusters = config.getClassVector();
+
+	auto stoplist = config.getValue("STOP_LIST");
+
+	//DEBUG
+	cout << use_xml << endl;
+	cout << config.getValue("TO_CLASSIFY") << endl;
+	for (auto x : clusters)
+	{
+		cout << x << endl;
+	}
+	//debug
+
+	patterns::CSamples s;
+	for (auto x : clusters)
+	{
+		s.loadFromFiles(config.getValue(x), stoplist, x, false, true, use_xml);
+	}
+	s.init();
+
+	patterns::CSamples test_texts;
+	test_texts.loadFromFiles(config.getValue("TO_CLASSIFY"), stoplist, "test", false, true,
+			use_xml);
+
+	//patterns::CEuclideanDistance euclide;
+	//patterns::CNaiveBayes bayes;
+	//patterns::CMahlanobisDistance mahlanobis;
 	patterns::CAngle angle;
 
 	/*
@@ -252,18 +245,21 @@ bool hyperspaceTest()
 	 }
 	 */
 
-	s.min_supply = 50;
-	s.createHyperspaceWithComplex(false, true);
+	//s.min_supply = 50;
+	//s.createHyperspaceWithComplex(false, true);
 	//s.createWeightedWordHyperspace();
 	//s.createWeightedDispersion();
-	//s.createHyperspaceWordsOnly();
-	s.createBinaryDispersion();
+	s.createHyperspaceWordsOnly();
+	//s.createBinaryDispersion();
 
 	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
+
+	executeClassifier(s, test_texts, &angle, "/home/generall/temp/class_out.txt");
 	//s.deleteInsignificantDimensions(0.1);
 	//cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-	double efficiency = patterns::testClassifier(s, test_texts, &mahlanobis);
-	cout << "efficiency silly normal Words " << efficiency << endl;
+	//double efficiency = patterns::testClassifier(s, test_texts, &angle);
+
+	//cout << "efficiency silly normal Words " << efficiency << endl;
 	//binary: 0.788732
 	//nonbin: 0.760563 <--- no wonder on this planet
 
@@ -293,9 +289,18 @@ bool hyperspaceTest()
 
 int main()
 {
+	if (configTest())
+	{
+		cout << "win" << endl;
+	}
+	else
+	{
+		cout << "fail" << endl;
+	}
+
 	loadTextXMLTest();
 
-	//hyperspaceTest();
+	hyperspaceTest();
 	//learningTest2("algo", 4);
 
 	//learningTest2("gadgets", 3);
@@ -324,15 +329,7 @@ int main()
 	 */
 
 	//FPTreeTest("coding", 20);
-	if (textPatternsTest() // && loadDictTest() && loadTextTest()
-	&& loadSamplesTest())
-	{
-		cout << "win" << endl;
-	}
-	else
-	{
-		cout << "fail" << endl;
-	}
+
 
 	std::regex r("ol.*");
 	cout << patterns::levenshtein_distance(string("troll"), string("trall")) << endl;

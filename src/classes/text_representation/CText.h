@@ -36,6 +36,7 @@ class CText
 
 public:
 
+	std::string file_name;
 	std::vector<CToken*> text;
 	std::map<CWord*, int, CWordCompare> statistics;
 	std::vector<std::pair<CWord *, int>> stat_by_friquency;

@@ -14,6 +14,7 @@
 #include <map>
 #include <iostream>
 #include <fstream>
+#include <dirent.h>
 #include "../text_representation/CText.h"
 #include "../pattern/TPatternInterface.h"
 #include "TSignature.h"
@@ -93,8 +94,8 @@ public:
 	uint groupToGlobal(uint index, const std::string &cluster);
 	void groupToGlobal(std::vector<uint> &signs, const std::string &cluster);
 
-	void loadFromFiles(std::string dir, std::string stoplist, bool has_puncluation = false,
-			bool calcStatistics = false);
+	void loadFromFiles(std::string dir, std::string stoplist, std::string cluster = "test", bool has_puncluation = false,
+			bool calcStatistics = false, bool use_xml = false);
 
 	void createMatrix();
 	void createGroupMatrix();

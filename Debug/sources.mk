@@ -28,4 +28,5 @@ src/classes/text_representation/tinyxml \
 src/classes/text_representation \
 src/classes/pattern \
 src/classes/learning \
+src/classes \
 
