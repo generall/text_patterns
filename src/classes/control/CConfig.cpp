@@ -79,7 +79,8 @@ std::vector<std::string> CConfig::getClassVector()
 	std::vector<std::string> classes;
 	for (auto rec : config)
 	{
-		if (rec.first != "STOP_LIST" && rec.first != "TO_CLASSIFY" && rec.first != "USE_XML")
+		if (rec.first != "STOP_LIST" && rec.first != "TO_CLASSIFY" && rec.first != "USE_XML"
+				&& rec.first != "TARGET" && rec.first != "MIN_SUPPLY")
 		{
 			classes.push_back(rec.first);
 		}

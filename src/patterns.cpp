@@ -10,24 +10,16 @@
 #include <string>
 #include <locale>
 #include <functional>
-#include "classes/pattern/CTextPattern.h"
-#include "classes/pattern/CPatternComplex.h"
-#include "classes/text_representation/CWord.h"
-#include "classes/text_representation/CDict.h"
-#include "classes/text_representation/CText.h"
-#include "classes/learning/CSamples.h"
-#include "classes/conffiles.h"
-#include "classes/CConfig.h"
-#include "functions/metric.hpp"
-#include "functions/TestClassifier.hpp"
+#include "classes/control/CControl.h"
+
+#define PROGRAMNAME "text_patterns"
 
 using namespace std;
 
-void pause(char *label)
+void help()
 {
-	std::cout << "pause #" << label << std::endl;
-	int i = 0;
-	std::cin >> i;
+	cout << "Usage: " << endl << PROGRAMNAME << " [-k] -c config_file_name -o output_file_name"
+			<< endl;
 }
 
 bool configTest()
@@ -42,40 +34,40 @@ bool configTest()
 }
 
 /*
-bool textPatternsTest()
-{
-	std::string text =
-			"ololo this text is used to find some patterns patterns are hard to understand text is very hard too text is a nice pattern";
-	patterns::CWord word("");
-	std::stringstream text_strteam(text);
-	std::vector<patterns::CToken> v_text;
-	std::string temp;
+ bool textPatternsTest()
+ {
+ std::string text =
+ "ololo this text is used to find some patterns patterns are hard to understand text is very hard too text is a nice pattern";
+ patterns::CWord word("");
+ std::stringstream text_strteam(text);
+ std::vector<patterns::CToken> v_text;
+ std::string temp;
 
-	while (std::getline(text_strteam, temp, ' '))
-	{
-		word.value = temp;
-		v_text.push_back(word);
-	}
+ while (std::getline(text_strteam, temp, ' '))
+ {
+ word.value = temp;
+ v_text.push_back(word);
+ }
 
-	patterns::CDelay delay;
-	delay.maxDelayNumber = 5;
-	patterns::CTokenPattern tokenPattern(2, "text");
+ patterns::CDelay delay;
+ delay.maxDelayNumber = 5;
+ patterns::CTokenPattern tokenPattern(2, "text");
 
-	patterns::CTextPattern tp;
-	auto temp_pair = std::make_pair(delay, tokenPattern);
-	tp.addBack(temp_pair);
+ patterns::CTextPattern tp;
+ auto temp_pair = std::make_pair(delay, tokenPattern);
+ tp.addBack(temp_pair);
 
-	tokenPattern.value = "pattern";
-	temp_pair = std::make_pair(delay, tokenPattern);
-	tp.addBack(temp_pair);
+ tokenPattern.value = "pattern";
+ temp_pair = std::make_pair(delay, tokenPattern);
+ tp.addBack(temp_pair);
 
-	int res = tp.compare(v_text);
+ int res = tp.compare(v_text);
 
-	if (res == 2)
-		return true;
-	return false;
-}
-*/
+ if (res == 2)
+ return true;
+ return false;
+ }
+ */
 bool loadTextTest()
 {
 	patterns::CText asimov;
@@ -84,24 +76,25 @@ bool loadTextTest()
 	return true;
 }
 
-bool loadTextXMLTest()
-{
-	patterns::CText xml_tree;
-	xml_tree.setStoplist(patterns::root, patterns::stoplist);
-	xml_tree.loadFromXml("/home/generall/temp/", "tree.xml");
-	for (int i = 0; i < 15; i++)
-	{
-		cout << xml_tree.text[i]->value << endl;
-	}
-	return true;
-}
-
+/*
+ bool loadTextXMLTest()
+ {
+ patterns::CText xml_tree;
+ xml_tree.setStoplist(patterns::root, patterns::stoplist);
+ xml_tree.loadFromXml("/home/generall/temp/", "tree.xml");
+ for (int i = 0; i < 15; i++)
+ {
+ cout << xml_tree.text[i]->value << endl;
+ }
+ return true;
+ }
+ */
 
 bool learningTest2(const string &group, int hard)
 {
 	cout << "loading learning test №2" << endl;
 	patterns::CSamples s;
-	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
+	//s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
 
 	cout << "files loaded" << endl;
 	for (auto x : s.samples)
@@ -126,7 +119,7 @@ bool FPTreeTest(const string &group, uint hard)
 {
 	cout << "loading FPTreeTest" << endl;
 	patterns::CSamples s;
-	s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
+	//s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
 	cout << "files loaded" << endl;
 	s.createMatrix();
 	cout << "Matrix generateg" << endl;
@@ -175,6 +168,7 @@ bool FPTreeTest(const string &group, uint hard)
 			converted[i].push_back(s.groupToGlobal(R[i][j], group));
 		}
 	}
+
 	auto res = s.getBestCoverAnd(converted);
 	for (int i : res)
 	{
@@ -287,24 +281,36 @@ bool hyperspaceTest()
 	return true;
 }
 
-int main()
+int main(int argc, char *agrv[])
 {
-	if (configTest())
+	patterns::CControl ctr;
+
+	try
 	{
-		cout << "win" << endl;
-	}
-	else
+		ctr.init(argc, agrv);
+		ctr.execute();
+	} catch (logic_error & e)
 	{
-		cout << "fail" << endl;
+		cout << e.what() << endl;
+		help();
 	}
 
-	loadTextXMLTest();
+	/*
+	 if (configTest())
+	 {
+	 cout << "win" << endl;
+	 }
+	 else
+	 {
+	 cout << "fail" << endl;
+	 }
 
-	hyperspaceTest();
+	 loadTextXMLTest();
+
+	 hyperspaceTest();
+	 */
 	//learningTest2("algo", 4);
-
 	//learningTest2("gadgets", 3);
-
 	/*
 	 patterns::FPTree<int> tt;
 
@@ -329,11 +335,5 @@ int main()
 	 */
 
 	//FPTreeTest("coding", 20);
-
-
-	std::regex r("ol.*");
-	cout << patterns::levenshtein_distance(string("troll"), string("trall")) << endl;
-	cout << std::regex_match("ololo", r) << endl;
-	cout << std::regex_match("trololo", r) << endl;
 	return 0;
 }

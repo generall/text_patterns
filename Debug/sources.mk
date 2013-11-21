@@ -24,9 +24,10 @@ C_UPPER_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 src \
+src/functions \
 src/classes/text_representation/tinyxml \
 src/classes/text_representation \
 src/classes/pattern \
 src/classes/learning \
-src/classes \
+src/classes/control \
 
