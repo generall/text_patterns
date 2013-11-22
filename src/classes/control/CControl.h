@@ -38,8 +38,8 @@ class CControl
 public:
 
 	void init(int _argc, char **_argv);
-	void classify();
-	void keywords();
+	void classify(CConfig &config, CSamples &s, CSamples &test_texts);
+	void keywords(CConfig &config, CSamples &s);
 	int execute();
 	CControl();
 	virtual ~CControl();

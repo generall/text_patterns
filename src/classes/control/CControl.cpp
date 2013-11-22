@@ -26,8 +26,8 @@ bool operator==(std::vector<uint> v1, std::vector<uint> v2)
 
 CControl::CControl()
 {
-	argv = 0;
-	argc = NULL;
+	argc = 0;
+	argv = NULL;
 	do_classify = false;
 // TODO Auto-generated constructor stub
 
@@ -106,47 +106,8 @@ void CControl::init(int _argc, char** _argv)
 
 }
 
-void CControl::classify()
+void CControl::classify(CConfig &config, CSamples &s, CSamples &test_texts)
 {
-
-	/*
-	 * Загрузка конфига
-	 */
-	patterns::CConfig config;
-	config.loadConfig(conf_filename);
-	bool use_xml = true;
-	use_xml = config.getValue("USE_XML") != "NO";
-
-	auto clusters = config.getClassVector();
-
-	auto stoplist = config.getValue("STOP_LIST");
-
-//DEBUG
-	/*
-	 cout << use_xml << endl;
-	 cout << config.getValue("TO_CLASSIFY") << endl;
-	 for (auto x : clusters)
-	 {
-	 cout << x << endl;
-	 }
-	 */
-//debug
-	/*
-	 * Загрузка файлов
-	 */
-	patterns::CSamples s;
-	for (auto x : clusters)
-	{
-		s.loadFromFiles(config.getValue(x), stoplist, x, false, true, use_xml);
-	}
-
-	/*
-	 * Приготовления
-	 */
-	s.init();
-	patterns::CSamples test_texts;
-	test_texts.loadFromFiles(config.getValue("TO_CLASSIFY"), stoplist, "test", false, true,
-			use_xml);
 
 	patterns::CAngle angle;
 	s.createHyperspaceWordsOnly();
@@ -160,19 +121,6 @@ void CControl::classify()
 
 int CControl::execute()
 {
-	if (do_classify)
-	{
-		classify();
-	}
-	else
-	{
-		keywords();
-	}
-	return 0;
-}
-
-void CControl::keywords()
-{
 	/*
 	 * Загрузка конфига
 	 */
@@ -180,22 +128,46 @@ void CControl::keywords()
 	config.loadConfig(conf_filename);
 	bool use_xml = true;
 	use_xml = config.getValue("USE_XML") != "NO";
-
 	auto clusters = config.getClassVector();
-
 	auto stoplist = config.getValue("STOP_LIST");
 
+	CSamples s;
 	/*
 	 * Загрузка файлов
 	 */
-	patterns::CSamples s;
 	for (auto x : clusters)
 	{
 		s.loadFromFiles(config.getValue(x), stoplist, x, false, true, use_xml);
 	}
 	s.init();
 
+	if (do_classify)
+	{
+		CSamples test_texts;
+		test_texts.loadFromFiles(config.getValue("TO_CLASSIFY"), stoplist, "test", false, true,
+				use_xml);
+		classify(config, s, test_texts);
+	}
+	else
+	{
+		keywords(config, s);
+	}
+	return 0;
+}
+
+void CControl::keywords(CConfig &config, CSamples &s)
+{
+	/*
+	 * Загрузка конфига
+	 */
+
 	std::map<std::string, std::vector<std::vector<uint> > > f_words;
+
+	std::vector<std::string> clusters;
+	for (auto x : s.signature_matrix_by_sign)
+	{
+		clusters.push_back(x.first);
+	}
 
 	for (auto cluster : clusters)
 	{
@@ -247,6 +219,7 @@ void CControl::keywords()
 		}
 	}
 
+	std::cout << "start write " << f_words[target].size() << std::endl;
 	std::fstream out(output_filename, std::ios::out | std::ios::trunc);
 	for (auto complex : f_words[target])
 	{
