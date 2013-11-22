@@ -31,23 +31,39 @@ class CSamples
 
 	bool debug = true;
 
+	std::map<std::string, FPTree<uint> > FPtree;
+
+	std::map<std::string, std::vector<uint> > agregator;
+
+
 	double entropy(std::vector<double> &data);
 	bool nextCombination(std::vector<uint> & a, int n);
 
 	uint max_word_to_consider = 300;
+	void calcGroupStat();
+	void createMatrix();
+	void createGroupMatrix();
+	void createSortedMatrix();
+	void createFPTree();
+	void createAgregator();
+	void summStatistics(std::map<CWord*, int, CWordCompare> &s1,
+			const std::map<CWord*, int, CWordCompare> &s2);
+	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> phi,
+			std::vector<std::vector<uint> > &R, bool max_only = false);
+
+	void correctErase();
+
 
 public:
 
 	uint min_supply = 40;
 
 	//глобальный массив примеров. Без структуры
-	std::map<std::string, std::vector<CText *> > samples;
 
+	std::map<std::string, std::vector<CText *> > samples;
 	std::map<std::string, std::vector<std::pair<CWord *, int> > > statistic;
 	std::vector<std::pair<CWord *, int> > global_statistic;
-
 	std::map<CWord *, int, CWordCompare> global_statistic_by_word;
-
 	std::map<std::string, std::vector<bool> > last_accepted_mask;
 	std::map<std::string, std::pair<uint, uint> > last_patter_statistic;
 
@@ -65,19 +81,12 @@ public:
 	std::map<std::string, std::map<uint, std::map<uint, int> > > group_signature_matrix_by_sign;
 	std::map<std::string, std::map<uint, std::vector<uint> > > group_signature_matrix_by_text_sorted;
 
-	std::map<std::string, FPTree<uint> > FPtree;
 
-	std::map<std::string, std::vector<uint> > agregator;
 
 	std::map<std::string, std::vector<double> > hyper_points;
 	std::map<std::string, std::vector<double> > hyper_points_dispersion;
 
 	void init();
-
-	//TF-IDF
-	void createTFMatrix();
-	void createDF();
-
 
 	void createBinaryDispersion();
 	//TODO добавиь вычисление расстояния махланобиса (по идее, оно не будет зависеть от бинарности, а только от входных данных, с нормализацией и без.)
@@ -97,14 +106,9 @@ public:
 	void loadFromFiles(std::string dir, std::string stoplist, std::string cluster = "test", bool has_puncluation = false,
 			bool calcStatistics = false, bool use_xml = false);
 
-	void createMatrix();
-	void createGroupMatrix();
-	void createSortedMatrix();
-	void createFPTree();
-	void createAgregator();
 
-	void FPFind(FPTree<uint> &tree, int delta_min, std::vector<uint> phi,
-			std::vector<std::vector<uint> > &R, bool max_only = false);
+
+
 
 	std::vector<std::vector<uint> > FPGrowth(const std::string &cluster, int delta_min,
 			bool max_only = false);
@@ -124,17 +128,16 @@ public:
 			std::map<std::string, std::vector<bool> > &mask, bool accept = false,
 			bool renew = false);
 
-	void calcGroupStat();
 
-	void summStatistics(std::map<CWord*, int, CWordCompare> &s1,
-			const std::map<CWord*, int, CWordCompare> &s2);
+
+
 
 	std::vector<std::vector<uint> > generateCovers(const std::string &cluster, uint maxlen);
 
 	CSamples();
 	virtual ~CSamples();
 
-	void correctErase();
+
 };
 
 class CPairComparator

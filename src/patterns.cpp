@@ -115,25 +115,16 @@ bool learningTest2(const string &group, int hard)
 	return true;
 }
 
+
 bool FPTreeTest(const string &group, uint hard)
 {
 	cout << "loading FPTreeTest" << endl;
 	patterns::CSamples s;
 	//s.loadFromFiles(patterns::root, patterns::stoplist, false, true);
-	cout << "files loaded" << endl;
-	s.createMatrix();
-	cout << "Matrix generateg" << endl;
-	s.createGroupMatrix();
-	cout << "Group matrix generateg" << endl;
-	s.createSortedMatrix();
-	cout << "Sorted matrix generated" << endl;
-	s.createFPTree();
-	cout << "FPTree matrix generated" << endl;
-	s.createAgregator();
-	cout << "Agregator generated" << endl;
+	s.init();
 
 	//s.FPtree["algo"].print(s.FPtree["algo"].root, 0);
-	std::cout << s.FPtree[group].pointers.size() << " <-- tree uniq word size" << std::endl;
+	//std::cout << s.FPtree[group].pointers.size() << " <-- tree uniq word size" << std::endl;
 
 	/*
 	 for (auto x : s.group_signature_matrix_by_text_sorted["algo"])
@@ -177,6 +168,7 @@ bool FPTreeTest(const string &group, uint hard)
 
 	return true;
 }
+
 
 bool hyperspaceTest()
 {
