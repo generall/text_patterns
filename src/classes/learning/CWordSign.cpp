@@ -24,6 +24,7 @@ double CWordSign::test(CText* text)
 	}
 	else
 	{
+		//std::cout << word->value << std::endl;
 		auto i = text->statistics.find(word);
 		if (i != text->statistics.end())
 		{

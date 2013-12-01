@@ -21,6 +21,7 @@
 #include "CComplexAndSing.h"
 #include "FPTree/FPTree.hpp"
 #include "CWeightWordSign.h"
+#include "CTFIDFSign.h"
 
 namespace patterns
 {
@@ -52,6 +53,7 @@ public:
 
 
 
+
 	//глобальный массив признаков.
 	std::vector<TSignature *> signatures;
 	//глобальная матрица Текст-признак по класстерам
@@ -71,11 +73,13 @@ public:
 	std::map<std::string, std::vector<double> > hyper_points;
 	std::map<std::string, std::vector<double> > hyper_points_dispersion;
 
+	std::map<uint, double> IDF;
+
+
 	void init();
 
 	//TF-IDF
-	void createTFMatrix();
-	void createDF();
+	void createIDF();
 
 
 	void createBinaryDispersion();

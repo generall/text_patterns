@@ -1014,7 +1014,84 @@ void CSamples::createWeightedWordHyperspace()
 		}
 	}
 }
+void CSamples::createTFDFHyperspace()
+{
+	uint size = signatures.size();
 
+	std::vector<TSignature *> new_sign; //пересоздание вектора сигнатур
+	for (uint i = 0; i < signatures.size(); i++)
+	{
+		CTFIDFSign * t = new CTFIDFSign(dynamic_cast<CWordSign *>(signatures[i])->word);
+		t->factor = IDF[i];
+		new_sign.push_back(t);
+	}
+	correctErase();
+	signatures = new_sign;
+
+	hyper_points.clear();
+	for (auto cluster : samples)
+	{
+		double ave_text_size = 0;
+		for (auto x : cluster.second)
+		{
+			ave_text_size += x->text.size();
+		}
+
+		for (uint i = 0; i < size; i++)
+		{
+			double summ = 0;
+			auto matrix = &signature_matrix_by_sign[cluster.first];
+			auto iter = matrix->find(i);
+			if (iter == matrix->end())
+			{
+				//признака не существует -> TF = 0;
+				hyper_points[cluster.first].push_back(0.0);
+			}
+			else
+			{
+
+				for (auto text : iter->second)
+				{
+					summ += (double) text.second;
+				}
+				//double M_tfidf = summ / (ave_text_size / cluster.second.size())
+				//		/ (double) cluster.second.size() * IDF[i]; //M[TF*IDF] среднее в класстере
+				double M_tfidf = summ / (double) cluster.second.size() * IDF[i];
+
+
+				/*
+				std::cout << "Word: " << global_statistic[i].first->value << " cluster size "
+						<< cluster.second.size() << " summ: " << summ << " text_sz: "
+						<< ave_text_size / (double) cluster.second.size() << " factor: " << IDF[i]
+						<< " MX: " << M_tfidf << std::endl;
+				int t;
+				std::cin >> t;
+				*/
+
+				hyper_points[cluster.first].push_back(M_tfidf); //
+			}
+		}
+	}
+}
+
+void CSamples::createIDF()
+{
+	int size = 0; // общее количество документов
+	for (auto cluster : samples)
+	{
+		size += cluster.second.size();
+	}
+
+	for (uint i = 0; i < signatures.size(); i++)
+	{
+		int doc_count = 0;
+		for (auto cluster : samples)
+		{
+			doc_count += signature_matrix_by_sign[cluster.first][i].size();
+		}
+		IDF[i] = log((double) size / (double) doc_count);
+	}
+}
 
 void CSamples::correctErase()
 {

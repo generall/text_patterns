@@ -80,8 +80,8 @@ public:
 		//normalize vector before.
 		auto n_sample = sample;
 		auto n_example = example;
-		normalizeVector(n_sample);
-		normalizeVector(n_example);
+		//normalizeVector(n_sample);
+		//normalizeVector(n_example);
 
 		double summ = 0;
 		if (n_sample.size() != n_example.size())

@@ -241,9 +241,14 @@ bool hyperspaceTest()
 	 */
 
 	s.min_supply = 45;
-	s.createWeightedWordHyperspace();
+	//s.createWeightedWordHyperspace();
 	//s.createWeightedDispersion();
+
+
+	s.createIDF();
+	s.createTFDFHyperspace();
 	//s.createHyperspaceWordsOnly();
+
 	//s.createBinaryDispersion();
 	//s.createHypeespaceWithComplex(true, true);
 
