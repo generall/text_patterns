@@ -10,6 +10,7 @@
 
 #include "../classes/learning/CSamples.h"
 #include "metric.hpp"
+#include "CKnearest.h"
 
 namespace patterns
 {
@@ -61,6 +62,33 @@ double testClassifier(CSamples &teaching_selection, CSamples &examples,
 	return (double) correct / (double) total;
 }
 
+double testKnearestClassifier(CSamples &teaching_selection, CSamples &examples,
+		TClassifierInterface *classifier)
+{
+
+	CKnearest k_nearest(&teaching_selection);
+	k_nearest.create_points();
+
+	uint correct = 0;
+	uint total = 0;
+	for (auto example_cluster : examples.samples)
+	{
+		std::string target_clusler = example_cluster.first;
+		for (auto text : example_cluster.second)
+		{
+			std::vector<double> point;
+			teaching_selection.createTextHyperPoint(text, point);
+			std::string nearest_cluster = k_nearest.classify(point, *classifier);
+			if (nearest_cluster == target_clusler)
+			{
+				correct++;
+			}
+			total++;
+		}
+		std::cout << "progress: " << total << std::endl;
+	}
+	return (double) correct / (double) total;
+}
 
 }
 #endif /* TESTCLASSIFIER_HPP_ */

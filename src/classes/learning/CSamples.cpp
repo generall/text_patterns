@@ -937,7 +937,7 @@ void CSamples::createTextHyperPoint(CText* text, std::vector<double>& hyper_poin
 	hyper_point.clear();
 	for (uint i = 0; i < signatures.size(); i++)
 	{
-		uint result = signatures[i]->test(text);
+		double result = signatures[i]->test(text);
 		hyper_point.push_back(result);	//nonbynary, но старые сигнатуры дадут бинарные данные
 
 		/*
@@ -1054,9 +1054,9 @@ void CSamples::createTFDFHyperspace()
 				{
 					summ += (double) text.second;
 				}
-				//double M_tfidf = summ / (ave_text_size / cluster.second.size())
-				//		/ (double) cluster.second.size() * IDF[i]; //M[TF*IDF] среднее в класстере
-				double M_tfidf = summ / (double) cluster.second.size() * IDF[i];
+				double M_tfidf = summ / (ave_text_size / cluster.second.size())
+						/ (double) cluster.second.size() * IDF[i]; //M[TF*IDF] среднее в класстере
+				//double M_tfidf = summ / (double) cluster.second.size() * IDF[i];
 
 
 				/*

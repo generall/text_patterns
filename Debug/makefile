@@ -8,6 +8,7 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include src/functions/subdir.mk
 -include src/classes/text_representation/subdir.mk
 -include src/classes/pattern/subdir.mk
 -include src/classes/learning/subdir.mk

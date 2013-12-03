@@ -256,7 +256,7 @@ bool hyperspaceTest()
 	cout << "Hyperspace created. Dimention: " << s.signatures.size() << endl;
 	//s.deleteInsignificantDimensions(0.1);
 	//cout << "Hyperspace cleaned. Dimention: " << s.signatures.size() << endl;
-	double efficiency = patterns::testClassifier(s, test_texts, &angle);
+	double efficiency = patterns::testKnearestClassifier(s, test_texts, &angle);
 	cout << "efficiency silly normal Words " << efficiency << endl;
 	//binary: 0.788732
 	//nonbin: 0.760563 <--- no wonder on this planet

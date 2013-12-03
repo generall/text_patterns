@@ -19,6 +19,7 @@ CTFIDFSign::CTFIDFSign()
 double CTFIDFSign::test(CText* text)
 {
 	double r = this->CWeightWordSign::test(text);
+
 	/*
 	std::cout << "Word: " << word->value << " count: " << r << " factor: " << factor << " text_sz:"
 			<< text->text.size() << " res: " << r * factor / (double) text->text.size()
@@ -27,8 +28,9 @@ double CTFIDFSign::test(CText* text)
 	std::cin >> t;
 	*/
 
-	return r*factor;
-	//return r * factor / (double) text->text.size(); // TF * IDF
+	//return r*factor;
+
+	return r * factor / (double) text->text.size(); // TF * IDF
 }
 
 CTFIDFSign::CTFIDFSign(CWord* w) :
